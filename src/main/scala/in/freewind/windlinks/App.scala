@@ -1,6 +1,7 @@
 package in.freewind.windlinks
 
 import com.xored.scalajs.react.React
+import in.freewind.windlinks.main.Main
 import org.scalajs.dom.HTMLElement
 
 import scala.scalajs.js.annotation.JSExport
@@ -15,5 +16,14 @@ object App {
       parent
     )
   }
+
+  @JSExport
+  def main(parent: HTMLElement) = {
+    React.renderComponent(
+      Main(Main.Props()),
+      parent
+    )
+  }
+
 
 }
