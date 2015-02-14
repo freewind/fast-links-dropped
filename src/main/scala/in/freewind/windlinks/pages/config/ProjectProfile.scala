@@ -8,7 +8,9 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
 
   case class State()
 
-  case class Props(project: Project, updateDescOfProject: (Project, String) => Unit)
+  case class Props(project: Project,
+                   updateDescOfProject: (Project, String) => Unit,
+                   updateProjectName: (String, String) => Unit)
 
   override def getInitialState(self: This) = State()
 
@@ -21,16 +23,16 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
   @scalax
   override def render(self: This) = {
     val project = self.props.project
+    val name = ProjectName(ProjectName.Props(project.name, self.props.updateProjectName))
     val desc = ProjectDescription(ProjectDescription.Props(project.description, self.updateDesc))
     <div>
-      <div className="project-name">
-        {project.name}
-      </div>{desc}<div className="project-links">
-      {project.links.map(link =>
+      {name}{desc}
+      <div className="project-links">
+        {project.links.map(link =>
         <div>
           {link.url}
         </div>)}
-    </div>
+      </div>
     </div>
   }
 
