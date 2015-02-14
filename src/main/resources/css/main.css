@@ -1,0 +1,13 @@
+#config-page {
+    background: red;
+}
+
+#config-page .project-list {
+    position: absolute;
+    width: 150px;
+}
+
+#config-page .project-profile {
+    position: absolute;
+    left: 150px;
+}

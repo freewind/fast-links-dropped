@@ -29,11 +29,11 @@ object ConfigPage extends TypedReactSpec with TypedEventListeners {
       case _ => <div></div>
     }
 
-    <div>
-      <div>
+    <div id="config-page">
+      <div className="project-list">
         {ProjectList(ProjectList.Props(projects, self.onSelectProject))}
       </div>
-      <div>
+      <div className="project-profile">
         {projectProfile}
       </div>
     </div>
