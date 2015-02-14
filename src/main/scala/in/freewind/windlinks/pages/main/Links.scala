@@ -1,8 +1,8 @@
-package in.freewind.windlinks.main
+package in.freewind.windlinks.pages.main
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.windlinks.Project
+import in.freewind.windlinks.{Link, Project}
 
 object Links extends TypedReactSpec with TypedEventListeners {
 
@@ -14,14 +14,17 @@ object Links extends TypedReactSpec with TypedEventListeners {
 
   @scalax
   override def render(self: This) = {
+    def showLink(link: Link) = s"${link.name}: ${link.url}"
     <div>
       {self.props.projects.map(p =>
-      <ul>
-        {p.title}
-        {
-          p.links.map(link => <div>{link.name} : {link.url}</div>)
-        }
-      </ul>
+      <div>
+        <div>
+          {p.name}
+        </div>{p.links.map(link =>
+        <div>
+          {showLink(link)}
+        </div>)}
+      </div>
     )}
     </div>
   }

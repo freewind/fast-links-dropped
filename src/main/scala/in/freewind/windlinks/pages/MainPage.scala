@@ -1,10 +1,11 @@
-package in.freewind.windlinks.main
+package in.freewind.windlinks.pages
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.windlinks.{Link, Project}
+import in.freewind.windlinks.pages.main.{Links, Search, SearchResult}
+import in.freewind.windlinks.{Project, SampleData}
 
-object Main extends TypedReactSpec with TypedEventListeners {
+object MainPage extends TypedReactSpec with TypedEventListeners {
 
   case class State(keyword: Option[String])
 
@@ -41,16 +42,9 @@ object Main extends TypedReactSpec with TypedEventListeners {
     for {
       project <- projects
       links = project.links.filter(_.url.contains(keyword))
-    } yield Project(project.title, links)
+    } yield Project(project.name, links)
   }
 
-  private val projects = Seq(
-    Project("scala", Seq(
-      Link(name = "official", url = "http://www.scala-lang.org/", description = Some("Official website")),
-      Link(name = "typesafe", url = "https://typesafe.com", description = Some("The company supports Scala")))),
-    Project("scalajs", Seq(
-      Link("official", url = "http://www.scala-js.org/"))),
-    Project("react", Seq(
-      Link("official", url = "http://facebook.github.io/react/")))
-  )
+  private val projects = SampleData.projects
+
 }

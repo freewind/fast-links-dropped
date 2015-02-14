@@ -1,4 +1,4 @@
-package in.freewind.windlinks.main
+package in.freewind.windlinks.pages.main
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
@@ -15,14 +15,19 @@ object SearchResult extends TypedReactSpec with TypedEventListeners {
   @scalax
   override def render(self: This) = {
     val results = self.props.filtered.collect({
-      case Project(title, links) => links.map(Result(title, _))
+      case Project(name, links, _) => links.map(Result(name, _))
     }).flatten
 
+    def showResult(r: Result) = s"[${r.projectName}] ${r.link.url} - ${r.link.name}"
+
     <ul>
-      {results.map(r => <li>[{r.projectTitle}] {r.link.url} - {r.link.name}</li>)}
+      {results.map(r =>
+      <li>
+        {showResult(r)}
+      </li>)}
     </ul>
   }
 
-  case class Result(projectTitle: String, link: Link)
+  case class Result(projectName: String, link: Link)
 
 }
