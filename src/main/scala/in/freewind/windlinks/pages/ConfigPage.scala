@@ -26,28 +26,9 @@ object ConfigPage extends TypedReactSpec with TypedEventListeners {
       setState(state.copy(projects = newProject +: state.projects, currentProject = Some(newProject)))
     }
 
-    def updateDesc(project: Project, newDesc: String) = {
-      val projects = state.projects
-      val newProject = project.copy(description = Option(newDesc).filterNot(_.isEmpty))
-
-      val newProjects = projects.map {
-        case p if p == project => newProject
-        case p => p
-      }
+    def updateProject(oldProject: Project, newProject: Project): Unit = {
+      val newProjects = state.projects.replace(oldProject, newProject)
       setState(state.copy(projects = newProjects, currentProject = Some(newProject)))
-    }
-
-    def updateProjectName(oldName: String, newName: String): Unit = {
-      val projects = state.projects
-      projects.find(_.name == oldName).foreach { oldProject =>
-        val newProject = oldProject.copy(name = newName)
-
-        val newProjects = projects.map {
-          case p if p == oldProject => newProject
-          case p => p
-        }
-        setState(state.copy(projects = newProjects, currentProject = Some(newProject)))
-      }
     }
 
   }
@@ -56,7 +37,7 @@ object ConfigPage extends TypedReactSpec with TypedEventListeners {
   override def render(self: This) = {
     val projects = self.state.projects
     val projectProfile = self.state.currentProject match {
-      case Some(p) => ProjectProfile(ProjectProfile.Props(p, self.updateDesc, self.updateProjectName))
+      case Some(p) => ProjectProfile(ProjectProfile.Props(p, self.updateProject))
       case _ => <div></div>
     }
 

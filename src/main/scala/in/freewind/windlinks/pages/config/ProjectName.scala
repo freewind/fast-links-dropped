@@ -8,7 +8,7 @@ object ProjectName extends TypedReactSpec with TypedEventListeners {
 
   case class State(editing: Boolean = false)
 
-  case class Props(name: String, updateProjectName: (String, String) => Unit)
+  case class Props(name: String, updateProjectName: String => Unit)
 
   override def getInitialState(self: This) = State()
 
@@ -22,7 +22,7 @@ object ProjectName extends TypedReactSpec with TypedEventListeners {
 
     val updateName = button.onClick(e => {
       val value = refs("input").getDOMNode().asInstanceOf[HTMLInputElement].value.trim
-      props.updateProjectName(props.name, value)
+      props.updateProjectName(value)
       setState(state.copy(editing = false))
     })
   }
