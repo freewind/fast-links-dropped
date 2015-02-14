@@ -7,7 +7,7 @@ import in.freewind.windlinks.{Project, SampleData}
 
 object ConfigPage extends TypedReactSpec with TypedEventListeners {
 
-  case class State(projects: Seq[Project] = SampleData.projects, currentProject: Option[Project] = None)
+  case class State(projects: Seq[Project] = SampleData.projects, currentProject: Option[Project] = SampleData.projects.headOption)
 
   case class Props()
 
