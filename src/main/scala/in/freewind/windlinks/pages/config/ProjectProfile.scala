@@ -8,34 +8,29 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
 
   case class State()
 
-  case class Props(project: Project)
+  case class Props(project: Project, updateDescOfProject: (Project, String) => Unit)
 
   override def getInitialState(self: This) = State()
 
   implicit class Closure(self: This) {
+    def updateDesc(desc: String) = {
+      self.props.updateDescOfProject(self.props.project, desc)
+    }
   }
 
   @scalax
   override def render(self: This) = {
     val project = self.props.project
+    val desc = ProjectDescription(ProjectDescription.Props(project.description, self.updateDesc))
     <div>
       <div className="project-name">
         {project.name}
-      </div>
-      <div className="project-desc">
-        {project.description match {
-        case Some(desc) => <div>
-          {desc}
-        </div>
-        case _ => <div>click to add description ...</div>
-      }}
-      </div>
-      <div className="project-links">
-        {project.links.map(link =>
+      </div>{desc}<div className="project-links">
+      {project.links.map(link =>
         <div>
           {link.url}
         </div>)}
-      </div>
+    </div>
     </div>
   }
 
