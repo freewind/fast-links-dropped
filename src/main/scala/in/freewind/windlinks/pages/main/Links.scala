@@ -12,21 +12,20 @@ object Links extends TypedReactSpec with TypedEventListeners {
 
   override def getInitialState(self: This) = State()
 
-  @scalax
+
   override def render(self: This) = {
-    def showLink(link: Link) = s"${link.name}: ${link.url}"
-    <div>
-      {self.props.projects.map(p =>
-      <div>
+    @scalax val workaround = {
+      def showLinks(links: Seq[Link]) = links.map(link => <div>{link.name}: {link.url}</div>)
+      def showProject(p: Project) = {
         <div>
-          {p.name}
-        </div>{p.links.map(link =>
-        <div>
-          {showLink(link)}
-        </div>)}
-      </div>
-    )}
-    </div>
+          <div>{p.name}</div>
+          <div>{showLinks(p.basicLinks)}</div>
+        </div>
+      }
+      val projects = self.props.projects.map(showProject)
+      <div>{projects}</div>
+    }
+    workaround
   }
 
 }

@@ -12,20 +12,21 @@ object SearchResult extends TypedReactSpec with TypedEventListeners {
 
   override def getInitialState(self: This) = State()
 
-  @scalax
   override def render(self: This) = {
-    val results = self.props.filtered.collect({
-      case Project(name, links, _) => links.map(Result(name, _))
-    }).flatten
+    @scalax val workaround = {
+      val results = self.props.filtered.collect({
+        case Project(name, basicLinks, moreGroups, _) =>
+          val allLinks = basicLinks ++: moreGroups.flatMap(_.links)
+          allLinks.map(Result(name, _))
+      }).flatten
 
-    def showResult(r: Result) = s"[${r.projectName}] ${r.link.url} - ${r.link.name}"
+      val links = results.map(r => <li> [{r.projectName}] {r.link.url} - {r.link.name} </li>)
 
-    <ul>
-      {results.map(r =>
-      <li>
-        {showResult(r)}
-      </li>)}
-    </ul>
+      <ul>
+        {links}
+      </ul>
+    }
+    workaround
   }
 
   case class Result(projectName: String, link: Link)

@@ -26,22 +26,21 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
 
   @scalax
   override def render(self: This) = {
-    val content = Seq(
-      Search(Search.Props(self.onSearch)),
-      self.state.keyword match {
-        case Some(keyword) => SearchResult(SearchResult.Props(filteredLinks(projects, keyword)))
-        case _ => Links(Links.Props(projects))
-      })
+    val search = Search(Search.Props(self.onSearch))
+    val content = self.state.keyword match {
+      case Some(keyword) => SearchResult(SearchResult.Props(filteredLinks(projects, keyword)))
+      case _ => Links(Links.Props(projects))
+    }
 
     <div>
-      {content}
+      {search}{content}
     </div>
   }
 
   def filteredLinks(projects: Seq[Project], keyword: String): Seq[Project] = {
     for {
       project <- projects
-      links = project.links.filter(_.url.contains(keyword))
+      links = project.basicLinks.filter(_.url.contains(keyword))
     } yield Project(project.name, links)
   }
 
