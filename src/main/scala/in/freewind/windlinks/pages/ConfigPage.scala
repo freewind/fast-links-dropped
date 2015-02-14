@@ -7,7 +7,7 @@ import in.freewind.windlinks.{Project, SampleData}
 
 object ConfigPage extends TypedReactSpec with TypedEventListeners {
 
-  case class State(currentProject: Option[Project] = None)
+  case class State(projects: Seq[Project] = SampleData.projects, currentProject: Option[Project] = None)
 
   case class Props()
 
@@ -20,10 +20,16 @@ object ConfigPage extends TypedReactSpec with TypedEventListeners {
     def onSelectProject(project: Project) = {
       setState(state.copy(currentProject = Some(project)))
     }
+
+    def onNewProject(projectName: String) = {
+      val newProject = Project(projectName)
+      setState(state.copy(projects = newProject +: state.projects, currentProject = Some(newProject)))
+    }
   }
 
   @scalax
   override def render(self: This) = {
+    val projects = self.state.projects
     val projectProfile = self.state.currentProject match {
       case Some(p) => ProjectProfile(ProjectProfile.Props(p))
       case _ => <div></div>
@@ -31,15 +37,13 @@ object ConfigPage extends TypedReactSpec with TypedEventListeners {
 
     <div id="config-page">
       <div className="project-list">
-        {ProjectList(ProjectList.Props(projects, self.onSelectProject))}
+        {ProjectList(ProjectList.Props(projects, self.onSelectProject, self.onNewProject))}
       </div>
       <div className="project-profile">
         {projectProfile}
       </div>
     </div>
   }
-
-  private val projects = SampleData.projects
 
 }
 
