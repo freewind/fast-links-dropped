@@ -11,3 +11,19 @@
     position: absolute;
     left: 150px;
 }
+
+#config-page .project-profile .project-name {
+    padding: 10px;
+    border: 1px solid #EEE;
+}
+
+#config-page .project-profile .project-desc {
+    padding: 10px;
+    border: 1px solid #EEE;
+}
+
+#config-page .project-profile .project-links {
+    padding: 10px;
+    border: 1px solid #EEE;
+}
+

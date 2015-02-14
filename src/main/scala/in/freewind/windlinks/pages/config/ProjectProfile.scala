@@ -19,13 +19,18 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
   override def render(self: This) = {
     val project = self.props.project
     <div>
-      <div>
+      <div className="project-name">
         {project.name}
       </div>
-      <div>
-        {project.description}
+      <div className="project-desc">
+        {project.description match {
+        case Some(desc) => <div>
+          {desc}
+        </div>
+        case _ => <div>click to add description ...</div>
+      }}
       </div>
-      <div>
+      <div className="project-links">
         {project.links.map(link =>
         <div>
           {link.url}
