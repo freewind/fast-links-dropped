@@ -1,14 +1,14 @@
 package in.freewind.windlinks.pages.config.profile
 
-import com.xored.scalajs.react.{scalax, TypedReactSpec}
 import com.xored.scalajs.react.util.TypedEventListeners
+import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.windlinks.Link
 
 object ProfileLinks extends TypedReactSpec with TypedEventListeners {
 
   case class State(editing: Boolean = false)
 
-  case class Props(groupName: Option[String], links: Seq[Link], updateLink: (Link, Link) => Unit)
+  case class Props(links: Seq[Link], updateLinks: Seq[Link] => Unit)
 
   override def getInitialState(self: This) = State()
 
@@ -16,32 +16,34 @@ object ProfileLinks extends TypedReactSpec with TypedEventListeners {
 
     import self._
 
-    val onChange = input.onChange(e => {
-      println(e.value)
-    })
-
     val startEditing = element.onClick(e => {
       setState(state.copy(editing = true))
     })
 
+    def newLink(link: Link): Unit = {
+      props.updateLinks(props.links :+ link)
+    }
+
+    def updateLink(oldLink: Link)(newLink: Link): Unit = {
+      props.updateLinks(props.links.replace(oldLink, newLink))
+    }
   }
 
   override def render(self: This) = {
     @scalax val workaround = {
-      val groupName = self.props.groupName match {
-        case Some(name) => <div>{name}</div>
-        case _ => <div></div>
-      }
 
-      val links = self.props.links.map(link => ProfileLink(ProfileLink.Props(link, self.props.updateLink)))
+      val links = self.props.links.map(link => ProfileLink(ProfileLink.Props(link, self.updateLink(link))))
 
-      <div className="project-links">
-        {groupName}
+      val newLink = NewLink(NewLink.Props(self.newLink))
+
+      <div className="group-links">
         {links}
+        {newLink}
       </div>
     }
     workaround
   }
+
 
 }
 

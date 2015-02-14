@@ -23,7 +23,7 @@ object ConfigPage extends TypedReactSpec with TypedEventListeners {
 
     def onNewProject(projectName: String) = {
       val newProject = Project(projectName)
-      setState(state.copy(projects = newProject +: state.projects, currentProject = Some(newProject)))
+      setState(state.copy(projects = state.projects :+ newProject, currentProject = Some(newProject)))
     }
 
     def updateProject(oldProject: Project, newProject: Project): Unit = {

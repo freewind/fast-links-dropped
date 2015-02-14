@@ -12,7 +12,6 @@ object Links extends TypedReactSpec with TypedEventListeners {
 
   override def getInitialState(self: This) = State()
 
-
   override def render(self: This) = {
     @scalax val workaround = {
       def showLinks(links: Seq[Link]) = links.map(link => <div>{link.name}: {link.url}</div>)

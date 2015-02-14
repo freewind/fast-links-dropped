@@ -22,8 +22,12 @@
     border: 1px solid #EEE;
 }
 
-#config-page .project-profile .project-links {
+#config-page .project-profile .project-group {
     padding: 10px;
     border: 1px solid #EEE;
+}
+
+#config-page .project-profile .link {
+    padding: 10px;
 }
 

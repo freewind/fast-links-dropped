@@ -1,15 +1,15 @@
 package in.freewind.windlinks.pages.config.profile
 
-import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import com.xored.scalajs.react.util.TypedEventListeners
+import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.windlinks.Link
-import org.scalajs.dom.HTMLInputElement
+import in.freewind.windlinks.pages.common.Editable
 
 object ProfileLink extends TypedReactSpec with TypedEventListeners {
 
-  case class State(editing: Boolean = false)
+  case class State()
 
-  case class Props(link: Link, updateLink: (Link, Link) => Unit)
+  case class Props(link: Link, updateLink: Link => Unit)
 
   override def getInitialState(self: This) = State()
 
@@ -17,50 +17,32 @@ object ProfileLink extends TypedReactSpec with TypedEventListeners {
 
     import self._
 
-    val startEditing = element.onClick(e => {
-      setState(state.copy(editing = true), initForm)
-    })
+    val link = props.link
 
-    val update = button.onClick(e => {
-      val newLink = new Link(getValue("name"), getValue("url"), Option(getValue("desc")).filterNot(_.isEmpty))
-      props.updateLink(props.link, newLink)
-      setState(state.copy(editing = false))
-    })
-
-    val cancel = button.onClick(e => {
-      setState(state.copy(editing = false))
-    })
-
-    private def initForm(): Unit = {
-      setValue("name", props.link.name)
-      setValue("url", props.link.url)
-      setValue("desc", props.link.description.getOrElse(""))
+    def updateName(newName: String): Unit = {
+      props.updateLink(link.copy(name = newName))
     }
 
-    private def getValue(key: String) = refs(key).getDOMNode().asInstanceOf[HTMLInputElement].value.trim
+    def updateUrl(newUrl: String): Unit = {
+      props.updateLink(link.copy(url = newUrl))
+    }
 
-    private def setValue(key: String, value: String) = refs(key).getDOMNode().asInstanceOf[HTMLInputElement].value = value
+    def updateDesc(newDesc: String): Unit = {
+      props.updateLink(link.copy(description = Option(newDesc).filterNot(_.isEmpty)))
+    }
+
   }
 
   override def render(self: This) = {
     @scalax val workaround = {
       val link = self.props.link
-      if (self.state.editing) {
+      <div className="link">
+        <div>{Editable.Input(link.name, self.updateName)}</div>
+        <div>{Editable.Input(link.url, self.updateUrl)}</div>
         <div>
-          <div><input ref="name" /></div>
-          <div><input ref="url"/></div>
-          <div><input ref="desc" /></div>
-          <button onClick={self.update}>Update</button>
-          <button onClick={self.cancel}>Cancel</button>
+          {Editable.Textarea(link.description.getOrElse(""), self.updateDesc)}
         </div>
-      } else {
-        <div onClick={self.startEditing}>
-          <div>{link.name} - {link.url}</div>
-          <div>
-            {link.description.getOrElse("")}
-          </div>
-        </div>
-      }
+      </div>
     }
     workaround
   }
