@@ -17,3 +17,7 @@ libraryDependencies ++= Seq(
 
 // creates resi-links-jsdeps.js
 skip in packageJSDependencies := false
+
+seq(lessSettings: _*)
+
+(compile in Compile) <<= compile in Compile dependsOn (LessKeys.less in Compile)
