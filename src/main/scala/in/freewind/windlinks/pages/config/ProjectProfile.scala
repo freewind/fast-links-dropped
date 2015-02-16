@@ -4,7 +4,7 @@ import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.windlinks.pages.common.Editable
 import in.freewind.windlinks.{LinkGroup, Link, Project}
-import in.freewind.windlinks.pages.config.profile.ProfileLinks
+import in.freewind.windlinks.pages.config.profile.{ProfileStars, ProfileLinks}
 
 object ProjectProfile extends TypedReactSpec with TypedEventListeners {
 
@@ -56,6 +56,7 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
 
       val name = Editable.Input(project.name, self.updateProjectName)
       val desc = Editable.Textarea(project.description.getOrElse("..."), self.updateDesc)
+      val stars = ProfileStars(ProfileStars.Props())
       val basicLinks = {
         <div className="project-group">
           {ProfileLinks(ProfileLinks.Props(project.basicLinks, self.updateBasicLinks))}
@@ -69,7 +70,7 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
       )
 
       <div>
-        {name}{desc}{basicLinks}{moreGroups}
+        {name}{stars}{desc}{basicLinks}{moreGroups}
       </div>
     }
     workaround

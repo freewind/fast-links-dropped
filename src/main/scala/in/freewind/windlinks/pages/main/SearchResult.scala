@@ -15,7 +15,7 @@ object SearchResult extends TypedReactSpec with TypedEventListeners {
   override def render(self: This) = {
     @scalax val workaround = {
       val results = self.props.filtered.collect({
-        case Project(name, basicLinks, moreGroups, _) =>
+        case Project(name, basicLinks, moreGroups, _, _) =>
           val allLinks = basicLinks ++: moreGroups.flatMap(_.links)
           allLinks.map(Result(name, _))
       }).flatten

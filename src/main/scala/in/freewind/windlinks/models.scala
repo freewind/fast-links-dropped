@@ -1,6 +1,10 @@
 package in.freewind.windlinks
 
-case class Project(name: String, basicLinks: Seq[Link] = Nil, moreLinkGroups: Seq[LinkGroup] = Nil, description: Option[String] = None)
+case class Project(name: String,
+                   basicLinks: Seq[Link] = Nil,
+                   moreLinkGroups: Seq[LinkGroup] = Nil,
+                   description: Option[String] = None,
+                   stars: Option[Int] = None)
 
 case class LinkGroup(name: String, links: Seq[Link] = Nil)
 
