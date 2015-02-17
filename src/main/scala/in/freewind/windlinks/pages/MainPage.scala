@@ -7,6 +7,8 @@ import in.freewind.windlinks.{Keycode, Link, SampleData}
 
 object MainPage extends TypedReactSpec with TypedEventListeners {
 
+  private val RefSearch = "search"
+
   case class State(keyword: Option[String] = None,
                    searchResults: Seq[Result] = Nil,
                    highlightSearchItem: Option[Result] = None)
@@ -48,11 +50,15 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
 
   }
 
+  override def componentDidMount(self: MainPage.This): Unit = {
+    self.refs(RefSearch).getDOMNode().focus()
+  }
+
   @scalax
   override def render(self: This) = {
     val searchResults = self.state.searchResults
     <div id="main-page">
-      <input placeholder="Search" onChange={self.onSearch} onKeyUp={self.onKeyUp} />
+      <input placeholder="Search" onChange={self.onSearch} onKeyUp={self.onKeyUp} ref={RefSearch}/>
       {
         self.state.keyword match {
           case Some(keyword) =>
