@@ -1,48 +1,83 @@
 package in.freewind.windlinks.pages
 
-import com.xored.scalajs.react.util.TypedEventListeners
+import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.windlinks.pages.main.{Links, Search, SearchResult}
-import in.freewind.windlinks.{Project, SampleData}
+import in.freewind.windlinks.pages.main.Links
+import in.freewind.windlinks.{Keycode, Link, SampleData}
 
 object MainPage extends TypedReactSpec with TypedEventListeners {
 
-  case class State(keyword: Option[String])
+  case class State(keyword: Option[String] = None,
+                   searchResults: Seq[Result] = Nil,
+                   highlightSearchItem: Option[Result] = None)
 
   case class Props()
 
-  override def getInitialState(self: This) = State(None)
+  override def getInitialState(self: This) = State()
 
   implicit class Closure(self: This) {
 
     import self._
 
-    def onSearch(keyword: String): Unit = {
-      val newKeyword = Option(keyword).map(_.trim)
-      setState(state.copy(newKeyword.filterNot(_.isEmpty)))
+    val onSearch = input.onChange(e => {
+      val keyword = Option(e.target.value).map(_.trim).filterNot(_.isEmpty)
+      val results = keyword.map(filterSearchResult).getOrElse(Nil)
+
+      setState(state.copy(keyword = keyword,
+        searchResults = results,
+        highlightSearchItem = results.headOption
+      ))
+    })
+
+    val onKeyUp = input.onKeyUp(e => {
+      e.which match {
+        case Keycode.Up => moveSelectedLink(-1)
+        case Keycode.Down => moveSelectedLink(1)
+        case _ =>
+      }
+    })
+
+    private def moveSelectedLink(step: Int): Unit = {
+      for {
+        hl <- state.highlightSearchItem
+        index = state.searchResults.indexOf(hl)
+        total = state.searchResults.length
+        newIndex = (index + step + total) % total
+      } setState(state.copy(highlightSearchItem = Some(state.searchResults(newIndex))))
     }
+
   }
 
   @scalax
   override def render(self: This) = {
-    <div>
-      {Search(Search.Props(self.onSearch))}
+    val searchResults = self.state.searchResults
+    <div id="main-page">
+      <input placeholder="Search" onChange={self.onSearch} onKeyUp={self.onKeyUp} />
       {
         self.state.keyword match {
-          case Some(keyword) => SearchResult(SearchResult.Props(filteredLinks(projects, keyword)))
+          case Some(keyword) =>
+            <ul>
+              {
+                searchResults.map { r =>
+                  val className = ClassName("highlight-search-item" -> (Some(r) == self.state.highlightSearchItem))
+                  <li className={className}> [{r.projectName}] {r.link.url} - {r.link.name} </li>
+                }
+              }
+            </ul>
           case _ => Links(Links.Props(projects))
         }
       }
     </div>
   }
 
-  def filteredLinks(projects: Seq[Project], keyword: String): Seq[Project] = {
-    for {
-      project <- projects
-      links = project.basicLinks.filter(_.url.contains(keyword))
-    } yield Project(project.name, links)
-  }
-
   private val projects = SampleData.projects
+
+  case class Result(projectName: String, link: Link)
+
+  private def filterSearchResult(keyword: String): Seq[Result] = for {
+    project <- projects
+    link <- project.basicLinks ++: project.moreLinkGroups.flatMap(_.links)
+    if link.url.contains(keyword)
+  } yield Result(project.name, link)
 
 }

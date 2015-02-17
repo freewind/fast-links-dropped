@@ -2,7 +2,7 @@ package in.freewind.windlinks.pages.config
 
 import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.windlinks.Project
+import in.freewind.windlinks.{Keycode, Project}
 
 object ProjectList extends TypedReactSpec with TypedEventListeners {
 
@@ -22,8 +22,7 @@ object ProjectList extends TypedReactSpec with TypedEventListeners {
 
     def newProject = input.onKeyUp(e => {
       val value = e.target.value.trim
-      val Enter = 13
-      if (!value.isEmpty && e.which == Enter) {
+      if (!value.isEmpty && e.which == Keycode.Enter) {
         self.props.onNewProject(value)
       }
     })

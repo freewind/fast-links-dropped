@@ -1,7 +1,7 @@
 package in.freewind.windlinks
 
 import com.xored.scalajs.react.React
-import in.freewind.windlinks.pages.ConfigPage
+import in.freewind.windlinks.pages.MainPage
 import org.scalajs.dom.HTMLElement
 
 import scala.scalajs.js.annotation.JSExport
@@ -20,7 +20,7 @@ object App {
   @JSExport
   def main(parent: HTMLElement) = {
     React.renderComponent(
-      ConfigPage(ConfigPage.Props()),
+      MainPage(MainPage.Props()),
       parent
     )
   }
