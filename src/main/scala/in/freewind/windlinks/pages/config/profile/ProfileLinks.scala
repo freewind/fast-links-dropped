@@ -29,19 +29,18 @@ object ProfileLinks extends TypedReactSpec with TypedEventListeners {
     }
   }
 
+  @scalax
   override def render(self: This) = {
-    @scalax val workaround = {
-
-      val links = self.props.links.map(link => ProfileLink(ProfileLink.Props(link, self.updateLink(link))))
-
-      val newLink = NewLink(NewLink.Props(self.newLink))
-
-      <div className="group-links">
-        {links}
-        {newLink}
-      </div>
-    }
-    workaround
+    <div className="group-links">
+      {
+        self.props.links.map(link =>
+          ProfileLink(ProfileLink.Props(link, self.updateLink(link)))
+        )
+      }
+      {
+        NewLink(NewLink.Props(self.newLink))
+      }
+    </div>
   }
 
 

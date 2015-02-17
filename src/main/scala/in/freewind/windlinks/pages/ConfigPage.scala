@@ -36,17 +36,17 @@ object ConfigPage extends TypedReactSpec with TypedEventListeners {
   @scalax
   override def render(self: This) = {
     val projects = self.state.projects
-    val projectProfile = self.state.currentProject match {
-      case Some(p) => ProjectProfile(ProjectProfile.Props(p, self.updateProject))
-      case _ => <div></div>
-    }
-
     <div id="config-page">
       <div className="project-list">
         {ProjectList(ProjectList.Props(projects, self.onSelectProject, self.onNewProject))}
       </div>
       <div className="project-profile">
-        {projectProfile}
+        {
+          self.state.currentProject match {
+            case Some(p) => ProjectProfile(ProjectProfile.Props(p, self.updateProject))
+            case _ => <div></div>
+          }
+        }
       </div>
     </div>
   }

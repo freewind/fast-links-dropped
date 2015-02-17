@@ -50,30 +50,27 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
 
   }
 
+  @scalax
   override def render(self: This) = {
-    @scalax val workaround = {
-      val project = self.props.project
-
-      val name = Editable.Input(project.name, self.updateProjectName)
-      val desc = Editable.Textarea(project.description.getOrElse("..."), self.updateDesc)
-      val stars = ProfileStars(ProfileStars.Props())
-      val basicLinks = {
+    val project = self.props.project
+    <div>
+      {Editable.Input(project.name, self.updateProjectName)}
+      {ProfileStars(ProfileStars.Props())}
+      {Editable.Textarea(project.description.getOrElse("..."), self.updateDesc)}
+      {
         <div className="project-group">
           {ProfileLinks(ProfileLinks.Props(project.basicLinks, self.updateBasicLinks))}
         </div>
       }
-      val moreGroups = project.moreLinkGroups.map(g =>
-        <div className="project-group">
-          {Editable.Input(g.name, self.updateGroupName(g))}
-          {ProfileLinks(ProfileLinks.Props(g.links, self.updateLinksOfGroup(g)))}
-        </div>
-      )
-
-      <div>
-        {name}{stars}{desc}{basicLinks}{moreGroups}
-      </div>
-    }
-    workaround
+      {
+        project.moreLinkGroups.map(g =>
+          <div className="project-group">
+            {Editable.Input(g.name, self.updateGroupName(g))}
+            {ProfileLinks(ProfileLinks.Props(g.links, self.updateLinksOfGroup(g)))}
+          </div>
+        )
+      }
+    </div>
   }
 
 }

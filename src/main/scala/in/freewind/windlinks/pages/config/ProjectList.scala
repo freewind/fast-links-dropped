@@ -30,16 +30,16 @@ object ProjectList extends TypedReactSpec with TypedEventListeners {
 
   @scalax
   override def render(self: This) = {
-    val names = self.props.projects.map(p =>
-      <div>
-        <button onClick={self.selectProject(p)}>
-          {p.name}
-        </button>
-      </div>
-    )
-
     <div>
-      {names}
+      {
+        self.props.projects.map(p =>
+          <div>
+            <button onClick={self.selectProject(p)}>
+              {p.name}
+            </button>
+          </div>
+        )
+      }
       <div>
         <input type="text" onKeyUp={self.newProject} placeholder="new project"/>
       </div>

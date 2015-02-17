@@ -33,18 +33,14 @@ object ProfileLink extends TypedReactSpec with TypedEventListeners {
 
   }
 
+  @scalax
   override def render(self: This) = {
-    @scalax val workaround = {
-      val link = self.props.link
-      <div className="link">
-        <div>{Editable.Input(link.name, self.updateName)}</div>
-        <div>{Editable.Input(link.url, self.updateUrl)}</div>
-        <div>
-          {Editable.Textarea(link.description.getOrElse(""), self.updateDesc)}
-        </div>
-      </div>
-    }
-    workaround
+    val link = self.props.link
+    <div className="link">
+      <div>{Editable.Input(link.name, self.updateName)}</div>
+      <div>{Editable.Input(link.url, self.updateUrl)}</div>
+      <div>{Editable.Textarea(link.description.getOrElse(""), self.updateDesc)}</div>
+    </div>
   }
 
 }

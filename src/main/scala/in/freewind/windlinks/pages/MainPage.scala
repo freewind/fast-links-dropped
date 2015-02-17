@@ -23,17 +23,16 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
     }
   }
 
-
   @scalax
   override def render(self: This) = {
-    val search = Search(Search.Props(self.onSearch))
-    val content = self.state.keyword match {
-      case Some(keyword) => SearchResult(SearchResult.Props(filteredLinks(projects, keyword)))
-      case _ => Links(Links.Props(projects))
-    }
-
     <div>
-      {search}{content}
+      {Search(Search.Props(self.onSearch))}
+      {
+        self.state.keyword match {
+          case Some(keyword) => SearchResult(SearchResult.Props(filteredLinks(projects, keyword)))
+          case _ => Links(Links.Props(projects))
+        }
+      }
     </div>
   }
 
