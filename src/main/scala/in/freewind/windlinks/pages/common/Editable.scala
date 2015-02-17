@@ -58,20 +58,26 @@ object Editable extends TypedReactSpec with TypedEventListeners {
     val originValue = self.props.value
     val useTextarea = self.props.useTextarea
     <div className="editable">
-      {self.state.editing match {
-      case true => <div>
-        {if (useTextarea) {
-          <textarea defaultValue={originValue} ref={Key} />
-        } else {
-          <input defaultValue={originValue} ref={Key} />
-        }}
-        <button onClick={self.update}>Update</button>
-        <button onClick={self.cancel}>Cancel</button>
-      </div>
-      case false => <div onClick={self.startEditing}>
-        {originValue}
-      </div>
-    }}
+      {
+        self.state.editing match {
+          case true =>
+            <div>
+              {
+                if (useTextarea) {
+                  <textarea defaultValue={originValue} ref={Key} />
+                } else {
+                  <input defaultValue={originValue} ref={Key} />
+                }
+              }
+              <button onClick={self.update}>Update</button>
+              <button onClick={self.cancel}>Cancel</button>
+            </div>
+          case false =>
+            <div onClick={self.startEditing}>
+              {originValue}
+            </div>
+        }
+      }
     </div>
   }
 
