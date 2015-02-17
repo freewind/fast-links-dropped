@@ -38,6 +38,10 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
       props.updateProject(project, project.copy(name = newName))
     }
 
+    def updateStars(value: Int): Unit = {
+      props.updateProject(project, project.copy(stars = Some(value)))
+    }
+
     def updateLinksOfGroup(linkGroup: LinkGroup)(newLinks: Seq[Link]): Unit = {
       val newGroup = linkGroup.copy(links = newLinks)
       props.updateProject(project, project.copy(moreLinkGroups = project.moreLinkGroups.replace(linkGroup, newGroup)))
@@ -55,7 +59,7 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
     val project = self.props.project
     <div>
       {Editable.Input(project.name, self.updateProjectName)}
-      {ProfileStars(ProfileStars.Props())}
+      {ProfileStars(ProfileStars.Props(project.stars, self.updateStars))}
       {Editable.Textarea(project.description.getOrElse("..."), self.updateDesc)}
       {
         <div className="project-group">
