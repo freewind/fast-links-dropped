@@ -8,6 +8,9 @@ import in.freewind.windlinks.{Keycode, Link, SampleData}
 object MainPage extends TypedReactSpec with TypedEventListeners {
 
   private val RefSearch = "search"
+  private val RefSearchResult = "search-result"
+  private val RefHighlightItem = "search-highlight-item"
+  private val HighlightClass = "highlight-search-item"
 
   case class State(keyword: Option[String] = None,
                    searchResults: Seq[Result] = Nil,
@@ -35,9 +38,14 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
       e.which match {
         case Keycode.Up => moveSelectedLink(-1)
         case Keycode.Down => moveSelectedLink(1)
+        case Keycode.Enter => clickOnHighlightLink()
         case _ =>
       }
     })
+
+    private def clickOnHighlightLink(): Unit = {
+      refs(RefHighlightItem).getDOMNode().click()
+    }
 
     private def moveSelectedLink(step: Int): Unit = {
       for {
@@ -47,7 +55,6 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
         newIndex = (index + step + total) % total
       } setState(state.copy(highlightSearchItem = Some(state.searchResults(newIndex))))
     }
-
   }
 
   override def componentDidMount(self: MainPage.This): Unit = {
@@ -62,11 +69,15 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
       {
         self.state.keyword match {
           case Some(keyword) =>
-            <ul>
+            <ul ref={RefSearchResult}>
               {
-                searchResults.map { r =>
-                  val className = ClassName("highlight-search-item" -> (Some(r) == self.state.highlightSearchItem))
-                  <li className={className}> [{r.projectName}] {r.link.url} - {r.link.name} </li>
+                searchResults.map { case item =>
+                  val isHighlight = Some(item) == self.state.highlightSearchItem
+                  val className = ClassName(HighlightClass -> isHighlight)
+                  val refHighlightLink = if (isHighlight) RefHighlightItem else ""
+                  <li className={className}>
+                    <a href={item.link.url} target="_blank" ref={refHighlightLink}>[{item.projectName}] {item.link.url} - {item.link.name}</a>
+                  </li>
                 }
               }
             </ul>
