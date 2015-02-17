@@ -91,10 +91,16 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
 
   case class Result(projectName: String, link: Link)
 
-  private def filterSearchResult(keyword: String): Seq[Result] = for {
-    project <- projects
-    link <- project.basicLinks ++: project.moreLinkGroups.flatMap(_.links)
-    if link.url.contains(keyword)
-  } yield Result(project.name, link)
+  private def filterSearchResult(keyword: String): Seq[Result] = {
+    def matches(url: String, keyword: String): Boolean = {
+      url.toLowerCase.contains(keyword.toLowerCase)
+    }
+
+    for {
+      project <- projects
+      link <- project.basicLinks ++: project.moreLinkGroups.flatMap(_.links)
+      if matches(link.url, keyword)
+    } yield Result(project.name, link)
+  }
 
 }
