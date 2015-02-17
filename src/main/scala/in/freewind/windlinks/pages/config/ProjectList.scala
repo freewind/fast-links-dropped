@@ -1,6 +1,6 @@
 package in.freewind.windlinks.pages.config
 
-import com.xored.scalajs.react.util.TypedEventListeners
+import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.windlinks.Project
 
@@ -9,6 +9,7 @@ object ProjectList extends TypedReactSpec with TypedEventListeners {
   case class State()
 
   case class Props(projects: Seq[Project],
+                   currentProject: Option[Project],
                    onSelectProject: Project => Unit,
                    onNewProject: String => Unit)
 
@@ -32,13 +33,14 @@ object ProjectList extends TypedReactSpec with TypedEventListeners {
   override def render(self: This) = {
     <div>
       {
-        self.props.projects.map(p =>
+        self.props.projects.map { p =>
+          val className = ClassName("current-project" -> (Some(p) == self.props.currentProject))
           <div>
-            <button onClick={self.selectProject(p)}>
+            <button onClick={self.selectProject(p)} className={className}>
               {p.name}
             </button>
           </div>
-        )
+        }
       }
       <div>
         <input type="text" onKeyUp={self.newProject} placeholder="new project"/>
