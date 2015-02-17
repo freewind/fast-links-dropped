@@ -30,6 +30,7 @@ object Editable extends TypedReactSpec with TypedEventListeners {
     val startEditing = input.onClick(e => {
       setState(state.copy(editing = true), () => {
         setValue(Key, props.value)
+        self.refs(Key).getDOMNode().focus()
       })
     })
 
