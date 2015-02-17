@@ -2,7 +2,7 @@ package in.freewind.windlinks.pages.main
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.windlinks.{Link, Project}
+import in.freewind.windlinks.Project
 
 object Links extends TypedReactSpec with TypedEventListeners {
 
@@ -12,19 +12,22 @@ object Links extends TypedReactSpec with TypedEventListeners {
 
   override def getInitialState(self: This) = State()
 
+  @scalax
   override def render(self: This) = {
-    @scalax val workaround = {
-      def showLinks(links: Seq[Link]) = links.map(link => <div>{link.name}: {link.url}</div>)
-      def showProject(p: Project) = {
-        <div>
-          <div>{p.name}</div>
-          <div>{showLinks(p.basicLinks)}</div>
-        </div>
+    <div>
+      {
+        self.props.projects.map(p =>
+          <div>
+            <div>{p.name}</div>
+            <div>
+              {
+                p.basicLinks.map(link => <div>{link.name}: {link.url}</div>)
+              }
+            </div>
+          </div>
+        )
       }
-      val projects = self.props.projects.map(showProject)
-      <div>{projects}</div>
-    }
-    workaround
+    </div>
   }
 
 }
