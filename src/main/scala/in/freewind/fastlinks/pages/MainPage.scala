@@ -11,7 +11,6 @@ import scala.scalajs.js
 object MainPage extends TypedReactSpec with TypedEventListeners {
 
   private val RefSearch = "search"
-  private val RefSearchResult = "search-result"
   private val RefHighlightItem = "search-highlight-item"
   private val HighlightClass = "highlight-search-item"
 
@@ -92,18 +91,21 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
       {
         self.state.keyword match {
           case Some(keyword) =>
-            <ul ref={RefSearchResult}>
+            <div className="search-results">
               {
                 searchResults.map { case item =>
                   val isHighlight = Some(item) == self.state.highlightSearchItem
-                  val className = ClassName(HighlightClass -> isHighlight)
+                  val className = ClassName("result-item" -> true, HighlightClass -> isHighlight)
                   val refHighlightLink = if (isHighlight) RefHighlightItem else ""
-                  <li className={className}>
-                    <a href={item.link.url} target="_blank" ref={refHighlightLink}>[{item.projectName}] {item.link.url} - {item.link.name}</a>
-                  </li>
+                  <div className={className}>
+                    <span className="result-name">[{item.projectName}{item.link.name.map(":" + _).getOrElse("")}]</span>
+                    <a href={item.link.url} target="_blank" ref={refHighlightLink}>
+                      <span className="link-url">{item.link.url}</span>
+                    </a>
+                  </div>
                 }
               }
-            </ul>
+            </div>
           case _ => Links(Links.Props(projects))
         }
       }

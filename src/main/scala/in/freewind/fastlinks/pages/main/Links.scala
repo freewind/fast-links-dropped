@@ -29,7 +29,7 @@ object Links extends TypedReactSpec with TypedEventListeners {
       </div>
     }
 
-    <div>
+    <div className="all-links">
       {
         self.props.projects.map(p =>
           <div>
