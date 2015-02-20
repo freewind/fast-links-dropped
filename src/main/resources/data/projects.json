@@ -1,22 +1,22 @@
 [{
   "name": "scala",
   "basicLinks": [{
-    "name": "official",
+    "name": ["official"],
     "url": "http://www.scala-lang.org/",
     "description": ["Official website"]
   }, {
-    "name": "typesafe",
+    "name": ["typesafe"],
     "url": "https://typesafe.com",
     "description": ["The company supports Scala"]
   }],
   "moreLinkGroups": [{
     "name": "more",
     "links": [{
-      "name": "other1",
+      "name": ["other1"],
       "url": "http://www.other1.org/",
       "description": ["some other1"]
     }, {
-      "name": "other2",
+      "name": ["other2"],
       "url": "https://other2.com",
       "description": ["some other2"]
     }]
@@ -25,14 +25,14 @@
 }, {
   "name": "scalajs",
   "basicLinks": [{
-    "name": "official",
+    "name": ["official"],
     "url": "http://www.scala-js.org/"
   }]
 }, {
   "name": "react",
   "basicLinks": [{
     "url": "http://facebook.github.io/react/",
-    "name": "official"
+    "name": ["official"]
   },
   {
     "url": "https://github.com/xored/scala-js-react"
