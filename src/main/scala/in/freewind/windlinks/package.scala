@@ -11,4 +11,8 @@ package object windlinks {
     }
   }
 
+  implicit class RichString(raw: String) {
+    def empty2option: Option[String] = Option(raw).filterNot(_.isEmpty)
+  }
+
 }

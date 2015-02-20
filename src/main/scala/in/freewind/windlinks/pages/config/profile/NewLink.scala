@@ -3,6 +3,7 @@ package in.freewind.windlinks.pages.config.profile
 import com.xored.scalajs.react.{scalax, TypedReactSpec}
 import com.xored.scalajs.react.util.TypedEventListeners
 import in.freewind.windlinks.Link
+import in.freewind.windlinks.RichString
 import org.scalajs.dom.HTMLInputElement
 
 object NewLink extends TypedReactSpec with TypedEventListeners {
@@ -24,7 +25,7 @@ object NewLink extends TypedReactSpec with TypedEventListeners {
     })
 
     val add = button.onClick(e => {
-      val newLink = new Link(getValue("name"), getValue("url"), Option(getValue("desc")).filterNot(_.isEmpty))
+      val newLink = new Link(getValue("name").empty2option, getValue("url"), Option(getValue("desc")).filterNot(_.isEmpty))
       self.props.newLink(newLink)
     })
 
@@ -35,6 +36,7 @@ object NewLink extends TypedReactSpec with TypedEventListeners {
     private def getValue(key: String) = refs(key).getDOMNode().asInstanceOf[HTMLInputElement].value.trim
 
     private def setValue(key: String, value: String) = refs(key).getDOMNode().asInstanceOf[HTMLInputElement].value = value
+
   }
 
   @scalax

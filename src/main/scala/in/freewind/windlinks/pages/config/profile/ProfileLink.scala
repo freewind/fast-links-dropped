@@ -1,5 +1,6 @@
 package in.freewind.windlinks.pages.config.profile
 
+import in.freewind.windlinks.RichString
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.windlinks.Link
@@ -20,7 +21,7 @@ object ProfileLink extends TypedReactSpec with TypedEventListeners {
     val link = props.link
 
     def updateName(newName: String): Unit = {
-      props.updateLink(link.copy(name = newName))
+      props.updateLink(link.copy(name = newName.empty2option))
     }
 
     def updateUrl(newUrl: String): Unit = {
@@ -37,7 +38,7 @@ object ProfileLink extends TypedReactSpec with TypedEventListeners {
   override def render(self: This) = {
     val link = self.props.link
     <div className="link">
-      <div>{Editable.Input(link.name, self.updateName)}</div>
+      <div>{Editable.Input(link.name.getOrElse(""), self.updateName)}</div>
       <div>{Editable.Input(link.url, self.updateUrl)}</div>
       <div>{Editable.Textarea(link.description.getOrElse(""), self.updateDesc)}</div>
     </div>

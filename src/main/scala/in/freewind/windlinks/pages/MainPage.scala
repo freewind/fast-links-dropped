@@ -94,7 +94,7 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
     val searchResults = self.state.searchResults
     val projects = self.state.projects
     <div id="main-page">
-      <input placeholder="Search" onChange={self.onSearch} onKeyUp={self.onKeyUp} ref={RefSearch}/>
+      <input className="search" placeholder="Search" onChange={self.onSearch} onKeyUp={self.onKeyUp} ref={RefSearch}/>
       {
         self.state.keyword match {
           case Some(keyword) =>
@@ -113,8 +113,10 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
           case _ => Links(Links.Props(projects))
         }
       }
-      <input placeholder="DataUrl" ref="url" />
-      <button onClick={self.fetchData}>Fetch</button>
+      <div className="setup">
+        <input placeholder="DataUrl" ref="url" />
+        <button onClick={self.fetchData}>Fetch</button>
+      </div>
     </div>
   }
 
