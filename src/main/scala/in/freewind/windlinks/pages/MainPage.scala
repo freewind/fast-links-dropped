@@ -3,13 +3,10 @@ package in.freewind.windlinks.pages
 import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.windlinks._
-import in.freewind.windlinks.pages.main.Links
-import org.scalajs.dom.HTMLInputElement
-import org.scalajs.dom.extensions.Ajax
+import in.freewind.windlinks.pages.main.{Links, Setup}
 import in.freewind.windlinks.wrappers.chrome.chrome._
-import scalajs.js
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.scalajs.js
 
 object MainPage extends TypedReactSpec with TypedEventListeners {
 
@@ -18,8 +15,8 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
   private val RefHighlightItem = "search-highlight-item"
   private val HighlightClass = "highlight-search-item"
 
-  private val StorageKeyData = "in.freewind.windlinks.storage.data"
-  private val StorageKeyUrl = "in.freewind.windlinks.storage.url"
+  val StorageKeyData = "in.freewind.windlinks.storage.data"
+  val StorageKeyUrl = "in.freewind.windlinks.storage.url"
 
   case class State(projects: Seq[Project] = Nil,
                    keyword: Option[String] = None,
@@ -60,16 +57,12 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
       }
     })
 
-    val fetchData = input.onKeyUp(e => {
-      val url = refs("url").getDOMNode().asInstanceOf[HTMLInputElement].value.trim
-      Ajax.get(url).onSuccess { case xhr =>
-        val json = xhr.responseText
-        storage.local.set(
-          scalajs.js.Dynamic.literal(StorageKeyData -> json),
-          () => self.setState(state.copy(projects = DataConverter.parse(json)))
-        )
-      }
-    })
+    def fetchedData(json: String): Unit = {
+      storage.local.set(
+        scalajs.js.Dynamic.literal(StorageKeyData -> json),
+        () => self.setState(state.copy(projects = DataConverter.parse(json)))
+      )
+    }
 
     private def clickOnHighlightLink(): Unit = {
       refs(RefHighlightItem).getDOMNode().click()
@@ -113,10 +106,7 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
           case _ => Links(Links.Props(projects))
         }
       }
-      <div className="setup">
-        <input placeholder="DataUrl" ref="url" />
-        <button onClick={self.fetchData}>Fetch</button>
-      </div>
+      {Setup(Setup.Props(self.fetchedData))}
     </div>
   }
 
