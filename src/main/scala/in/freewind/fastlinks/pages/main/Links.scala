@@ -22,7 +22,7 @@ object Links extends TypedReactSpec with TypedEventListeners {
               {
                 link.name.map(linkName => <span className="link-name">[{linkName}]</span>)
               }
-              <span className="link-url">{link.url}</span>
+              <a className="link-url" href={link.url} target="_blank">{link.url}</a>
             </div>
           )
         }
