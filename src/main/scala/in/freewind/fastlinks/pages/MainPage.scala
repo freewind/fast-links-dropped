@@ -5,6 +5,7 @@ import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks._
 import in.freewind.fastlinks.pages.main.{Links, Setup}
 import in.freewind.fastlinks.wrappers.chrome.chrome._
+import org.scalajs.dom.HTMLInputElement
 
 import scala.scalajs.js
 
@@ -38,8 +39,12 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
 
     import self._
 
+    private def getKeyword: String = {
+      refs(RefSearch).getDOMNode().asInstanceOf[HTMLInputElement].value.trim
+    }
+
     val onSearch = input.onChange(e => {
-      val keyword = Option(e.target.value).map(_.trim).filterNot(_.isEmpty)
+      val keyword = Option(getKeyword).filterNot(_.isEmpty)
       val results = keyword.map(filterSearchResult(self.state.projects)).getOrElse(Nil)
 
       setState(state.copy(keyword = keyword,
@@ -55,6 +60,13 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
         case Keycode.Enter => clickOnHighlightLink()
         case _ =>
       }
+    })
+
+    val onClearSearch = button.onClick(e => {
+      val search = refs(RefSearch).getDOMNode()
+      search.asInstanceOf[HTMLInputElement].value = ""
+      search.focus()
+      onSearch.apply(null)
     })
 
     def onDataFetched(url: String, json: String): Unit = {
@@ -87,7 +99,10 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
     val searchResults = self.state.searchResults
     val projects = self.state.projects
     <div id="main-page">
-      <input className="search" placeholder="Search" onChange={self.onSearch} onKeyUp={self.onKeyUp} ref={RefSearch}/>
+      <div className="search-panel">
+        <input className="search" placeholder="Search" onChange={self.onSearch} onKeyUp={self.onKeyUp} ref={RefSearch}/>
+        <span onClick={self.onClearSearch} className="clear-search">[X]</span>
+      </div>
       {
         self.state.keyword match {
           case Some(keyword) =>
