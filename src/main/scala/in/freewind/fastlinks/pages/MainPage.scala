@@ -1,10 +1,10 @@
-package in.freewind.windlinks.pages
+package in.freewind.fastlinks.pages
 
 import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.windlinks._
-import in.freewind.windlinks.pages.main.{Links, Setup}
-import in.freewind.windlinks.wrappers.chrome.chrome._
+import in.freewind.fastlinks._
+import in.freewind.fastlinks.pages.main.{Links, Setup}
+import in.freewind.fastlinks.wrappers.chrome.chrome._
 
 import scala.scalajs.js
 
@@ -15,8 +15,8 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
   private val RefHighlightItem = "search-highlight-item"
   private val HighlightClass = "highlight-search-item"
 
-  val StorageKeyData = "in.freewind.windlinks.storage.data"
-  val StorageKeyUrl = "in.freewind.windlinks.storage.url"
+  val StorageKeyData = "in.freewind.fastlinks.storage.data"
+  val StorageKeyUrl = "in.freewind.fastlinks.storage.url"
 
   case class State(projects: Seq[Project] = Nil,
                    keyword: Option[String] = None,

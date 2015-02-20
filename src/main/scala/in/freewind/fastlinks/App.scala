@@ -1,7 +1,7 @@
-package in.freewind.windlinks
+package in.freewind.fastlinks
 
 import com.xored.scalajs.react.React
-import in.freewind.windlinks.pages.MainPage
+import in.freewind.fastlinks.pages.MainPage
 import org.scalajs.dom
 import org.scalajs.dom.HTMLElement
 

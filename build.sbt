@@ -1,6 +1,6 @@
 enablePlugins(ScalaJSPlugin)
 
-name := "wind-links"
+name := "fast-links"
 
 organization := "in.freewind"
 
@@ -34,7 +34,7 @@ chrome <<= (fastOptJS in Compile) map { _ =>
   IO.copyFile(new File("./target/scala-2.11/resource_managed/main/resources/css/main.css"), new File(to, "css/main.css"))
   Seq("js", "css", "images").foreach(dirName => IO.copyDirectory(new File("./target/scala-2.11/classes/" + dirName), new File(to, dirName)))
   Seq("index.html", "manifest.json").foreach(fileName => IO.copyFile(new File("./target/scala-2.11/classes/" + fileName), new File(to, fileName)))
-  Seq("wind-links-jsdeps.js", "wind-links-fastopt.js", "wind-links-launcher.js").foreach(fileName =>
+  Seq("fast-links-jsdeps.js", "fast-links-fastopt.js", "fast-links-launcher.js").foreach(fileName =>
     IO.copyFile(new File("./target/scala-2.11/" + fileName), new File(to, "js/" + fileName)))
 }
 

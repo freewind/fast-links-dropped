@@ -1,9 +1,9 @@
-package in.freewind.windlinks.pages.config.profile
+package in.freewind.fastlinks.pages.config.profile
 
 import com.xored.scalajs.react.{scalax, TypedReactSpec}
 import com.xored.scalajs.react.util.TypedEventListeners
-import in.freewind.windlinks.Link
-import in.freewind.windlinks.RichString
+import in.freewind.fastlinks.Link
+import in.freewind.fastlinks.RichString
 import org.scalajs.dom.HTMLInputElement
 
 object NewLink extends TypedReactSpec with TypedEventListeners {

@@ -1,4 +1,4 @@
-package in.freewind.windlinks.wrappers.chrome
+package in.freewind.fastlinks.wrappers.chrome
 
 import scalajs.js
 

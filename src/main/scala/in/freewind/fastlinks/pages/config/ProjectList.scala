@@ -1,8 +1,8 @@
-package in.freewind.windlinks.pages.config
+package in.freewind.fastlinks.pages.config
 
 import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.windlinks.{Keycode, Project}
+import in.freewind.fastlinks.{Keycode, Project}
 
 object ProjectList extends TypedReactSpec with TypedEventListeners {
 

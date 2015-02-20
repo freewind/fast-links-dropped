@@ -1,6 +1,6 @@
 package in.freewind
 
-package object windlinks {
+package object fastlinks {
 
   implicit class RichSeq[T](seq: Seq[T]) {
     def replace(old: T, newOne: T): Seq[T] = {

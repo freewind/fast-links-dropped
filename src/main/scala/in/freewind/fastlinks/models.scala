@@ -1,4 +1,4 @@
-package in.freewind.windlinks
+package in.freewind.fastlinks
 
 case class Project(name: String,
                    basicLinks: Seq[Link] = Nil,

@@ -1,7 +1,7 @@
-Wind-Links
+Fast-Links
 ===========
 
-An web application that can manage links.
+An chrome extension that manages and fast jump to custom links.
 
 Powered by: [scalajs](http://www.scala-js.org/) + [scala-js-react](https://github.com/xored/scala-js-react)
 

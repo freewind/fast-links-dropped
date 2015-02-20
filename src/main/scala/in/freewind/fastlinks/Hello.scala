@@ -1,4 +1,4 @@
-package in.freewind.windlinks
+package in.freewind.fastlinks
 
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 
