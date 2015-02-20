@@ -12,6 +12,7 @@ resolvers += Resolver.sonatypeRepo("releases")
 
 libraryDependencies ++= Seq(
   "com.xored.scalajs" %%% "scalajs-react" % "0.3.3",
+  "com.lihaoyi" %%% "upickle" % "0.2.6",
   compilerPlugin("org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full)
 )
 

@@ -2,8 +2,14 @@ package in.freewind.windlinks.pages
 
 import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
+import in.freewind.windlinks._
 import in.freewind.windlinks.pages.main.Links
-import in.freewind.windlinks.{Keycode, Link, SampleData}
+import org.scalajs.dom.HTMLInputElement
+import org.scalajs.dom.extensions.Ajax
+import in.freewind.windlinks.wrappers.chrome.chrome._
+import scalajs.js
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object MainPage extends TypedReactSpec with TypedEventListeners {
 
@@ -12,13 +18,24 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
   private val RefHighlightItem = "search-highlight-item"
   private val HighlightClass = "highlight-search-item"
 
-  case class State(keyword: Option[String] = None,
+  private val StorageKeyData = "in.freewind.windlinks.storage.data"
+  private val StorageKeyUrl = "in.freewind.windlinks.storage.url"
+
+  case class State(projects: Seq[Project] = Nil,
+                   keyword: Option[String] = None,
                    searchResults: Seq[Result] = Nil,
                    highlightSearchItem: Option[Result] = None)
 
   case class Props()
 
-  override def getInitialState(self: This) = State()
+  override def getInitialState(self: This) = {
+    storage.local.get(js.Array(StorageKeyData), (items: js.Dictionary[String]) => {
+      items.get(StorageKeyData).map(DataConverter.parse).foreach(projects =>
+        self.setState(self.state.copy(projects = projects))
+      )
+    })
+    State()
+  }
 
   implicit class Closure(self: This) {
 
@@ -26,7 +43,7 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
 
     val onSearch = input.onChange(e => {
       val keyword = Option(e.target.value).map(_.trim).filterNot(_.isEmpty)
-      val results = keyword.map(filterSearchResult).getOrElse(Nil)
+      val results = keyword.map(filterSearchResult(self.state.projects)).getOrElse(Nil)
 
       setState(state.copy(keyword = keyword,
         searchResults = results,
@@ -40,6 +57,17 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
         case Keycode.Down => moveSelectedLink(1)
         case Keycode.Enter => clickOnHighlightLink()
         case _ =>
+      }
+    })
+
+    val fetchData = input.onKeyUp(e => {
+      val url = refs("url").getDOMNode().asInstanceOf[HTMLInputElement].value.trim
+      Ajax.get(url).onSuccess { case xhr =>
+        val json = xhr.responseText
+        storage.local.set(
+          scalajs.js.Dynamic.literal(StorageKeyData -> json),
+          () => self.setState(state.copy(projects = DataConverter.parse(json)))
+        )
       }
     })
 
@@ -64,6 +92,7 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
   @scalax
   override def render(self: This) = {
     val searchResults = self.state.searchResults
+    val projects = self.state.projects
     <div id="main-page">
       <input placeholder="Search" onChange={self.onSearch} onKeyUp={self.onKeyUp} ref={RefSearch}/>
       {
@@ -84,14 +113,14 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
           case _ => Links(Links.Props(projects))
         }
       }
+      <input placeholder="DataUrl" ref="url" />
+      <button onClick={self.fetchData}>Fetch</button>
     </div>
   }
 
-  private val projects = SampleData.projects
-
   case class Result(projectName: String, link: Link)
 
-  private def filterSearchResult(keyword: String): Seq[Result] = {
+  private def filterSearchResult(projects: Seq[Project])(keyword: String): Seq[Result] = {
     def matches(url: String, keyword: String): Boolean = {
       url.toLowerCase.contains(keyword.toLowerCase)
     }
