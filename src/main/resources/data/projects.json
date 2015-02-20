@@ -1,6 +1,5 @@
 [{
   "name": "scala",
-  "stars": [5],
   "basicLinks": [{
     "name": "official",
     "url": "http://www.scala-lang.org/",
@@ -25,14 +24,12 @@
   "description": ["Links of Scala"]
 }, {
   "name": "scalajs",
-  "stars": [4],
   "basicLinks": [{
     "name": "official",
     "url": "http://www.scala-js.org/"
   }]
 }, {
   "name": "react",
-  "stars": [],
   "basicLinks": [{
     "name": "official",
     "url": "http://facebook.github.io/react/"
