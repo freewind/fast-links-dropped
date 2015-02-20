@@ -31,7 +31,10 @@
 }, {
   "name": "react",
   "basicLinks": [{
-    "name": "official",
-    "url": "http://facebook.github.io/react/"
+    "url": "http://facebook.github.io/react/",
+    "name": "official"
+  },
+  {
+    "url": "https://github.com/xored/scala-js-react"
   }]
 }]
