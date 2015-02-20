@@ -11,7 +11,7 @@ object Setup extends TypedReactSpec with TypedEventListeners {
 
   case class State(working: Boolean = false)
 
-  case class Props(fetchedData: String => Unit)
+  case class Props(onDataFetched: (String, String) => Unit, dataUrl: Option[String] = None)
 
   override def getInitialState(self: This) = State()
 
@@ -22,7 +22,7 @@ object Setup extends TypedReactSpec with TypedEventListeners {
     val fetchData = input.onKeyUp(e => {
       val url = refs("url").getDOMNode().asInstanceOf[HTMLInputElement].value.trim
       Ajax.get(url).onSuccess { case xhr =>
-        props.fetchedData(xhr.responseText)
+        props.onDataFetched(url, xhr.responseText)
       }
     })
 
@@ -34,12 +34,13 @@ object Setup extends TypedReactSpec with TypedEventListeners {
 
   @scalax
   override def render(self: This) = {
+    val dataUrl = self.props.dataUrl
     <div className="setup">
       {
         if (self.state.working) {
           <div onClick={self.openSetup}>setup [-]</div>
           <div>
-            <input placeholder="url of projects data" ref="url" />
+            <input placeholder="url of projects data" ref="url" defaultValue={dataUrl.getOrElse("")}/>
             <button onClick={self.fetchData}>Fetch</button>
           </div>
         } else {

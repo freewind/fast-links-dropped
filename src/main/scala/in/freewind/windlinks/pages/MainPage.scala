@@ -21,15 +21,16 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
   case class State(projects: Seq[Project] = Nil,
                    keyword: Option[String] = None,
                    searchResults: Seq[Result] = Nil,
-                   highlightSearchItem: Option[Result] = None)
+                   highlightSearchItem: Option[Result] = None,
+                   dataUrl: Option[String] = None)
 
   case class Props()
 
   override def getInitialState(self: This) = {
-    storage.local.get(js.Array(StorageKeyData), (items: js.Dictionary[String]) => {
-      items.get(StorageKeyData).map(DataConverter.parse).foreach(projects =>
-        self.setState(self.state.copy(projects = projects))
-      )
+    storage.local.get(js.Array(StorageKeyData, StorageKeyUrl), (items: js.Dictionary[String]) => {
+      val projects = items.get(StorageKeyData).map(DataConverter.parse).getOrElse(Nil)
+      val dataUrl = items.get(StorageKeyUrl)
+      self.setState(self.state.copy(projects = projects, dataUrl = dataUrl))
     })
     State()
   }
@@ -57,10 +58,10 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
       }
     })
 
-    def fetchedData(json: String): Unit = {
+    def onDataFetched(url: String, json: String): Unit = {
       storage.local.set(
-        scalajs.js.Dynamic.literal(StorageKeyData -> json),
-        () => self.setState(state.copy(projects = DataConverter.parse(json)))
+        scalajs.js.Dynamic.literal(StorageKeyUrl -> url, StorageKeyData -> json),
+        () => self.setState(state.copy(projects = DataConverter.parse(json), dataUrl = Some(url)))
       )
     }
 
@@ -106,7 +107,7 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
           case _ => Links(Links.Props(projects))
         }
       }
-      {Setup(Setup.Props(self.fetchedData))}
+      {Setup(Setup.Props(self.onDataFetched, self.state.dataUrl))}
     </div>
   }
 
