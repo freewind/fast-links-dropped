@@ -21,3 +21,19 @@ skip in packageJSDependencies := false
 seq(lessSettings: _*)
 
 (compile in Compile) <<= compile in Compile dependsOn (LessKeys.less in Compile)
+
+persistLauncher in Compile := true
+
+lazy val chrome = taskKey[Unit]("Generate the chrome app")
+
+chrome <<= (fastOptJS in Compile) map { _ =>
+  val to = new File("./target/chrome")
+  IO.delete(to)
+  IO.createDirectory(to)
+  IO.copyFile(new File("./target/scala-2.11/resource_managed/main/resources/css/main.css"), new File(to, "css/main.css"))
+  Seq("js", "css", "images").foreach(dirName => IO.copyDirectory(new File("./target/scala-2.11/classes/" + dirName), new File(to, dirName)))
+  Seq("index.html", "manifest.json").foreach(fileName => IO.copyFile(new File("./target/scala-2.11/classes/" + fileName), new File(to, fileName)))
+  Seq("wind-links-jsdeps.js", "wind-links-fastopt.js", "wind-links-launcher.js").foreach(fileName =>
+    IO.copyFile(new File("./target/scala-2.11/" + fileName), new File(to, "js/" + fileName)))
+}
+

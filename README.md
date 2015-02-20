@@ -9,6 +9,6 @@ Run
 ---
 
 ```
-$ ./sbt fastOptJS
-$ open target/scala-2.11/classes/index.html
+$ ./sbt chrome
+$ open target/chrome/index.html
 ```
