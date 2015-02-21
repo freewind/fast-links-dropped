@@ -3,7 +3,7 @@ package in.freewind.fastlinks.pages
 import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks._
-import in.freewind.fastlinks.pages.main.{Links, Setup}
+import in.freewind.fastlinks.pages.main.{OneProject, Setup}
 import in.freewind.fastlinks.wrappers.chrome.chrome._
 import org.scalajs.dom.HTMLInputElement
 import org.scalajs.dom.extensions.KeyCode
@@ -121,7 +121,14 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
                 }
               }
             </div>
-          case _ => Links(Links.Props(projects))
+          case _ =>
+            <div className="all-links">
+              {
+                self.state.projects.map(p =>
+                  OneProject(OneProject.Props(p))
+                )
+              }
+            </div>
         }
       }
       {Setup(Setup.Props(self.onDataFetched, self.state.dataUrl))}
