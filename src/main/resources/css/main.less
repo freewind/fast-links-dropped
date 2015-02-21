@@ -61,6 +61,8 @@ body {
     }
   }
   .all-links {
+    overflow: auto;
+    max-height: @windowHeight - 30;
     .show-description {
       color: #999999;
       cursor: pointer;
@@ -115,6 +117,7 @@ body {
   }
   .setup {
     position: absolute;
+    background-color: #FFFFFF;
     bottom: 0;
     width: @windowWidth - 10;
     .banner {
