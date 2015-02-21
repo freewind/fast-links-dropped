@@ -29,11 +29,9 @@ object Links extends TypedReactSpec with TypedEventListeners {
       </div>
     }
 
-    def showStars(stars: Option[Int]) = {
-      stars match {
-        case Some(n) => (1 to n).toList.map(_ => "*")
-        case _ => <span></span>
-      }
+    def showStars(stars: Option[Int]) = stars match {
+      case Some(n) => (1 to n).toList.map(_ => "★")
+      case _ => ""
     }
 
     <div className="all-links">
@@ -42,7 +40,7 @@ object Links extends TypedReactSpec with TypedEventListeners {
           <div>
             <div className="project-name">
               <span>{p.name}</span>
-              <span>{showStars(p.stars)}</span>
+              <span className="stars">{showStars(p.stars)}</span>
             </div>
             <div className="basic-links">
               { showLinks(p.basicLinks) }
