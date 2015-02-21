@@ -1,13 +1,15 @@
 package in.freewind.fastlinks
 
+import upickle._
+
 object DataConverter {
 
   def stringify(projects: Seq[Project]): String = {
-    upickle.write(projects)
+    write(projects)
   }
 
   def parse(json: String): Seq[Project] = {
-    upickle.read[Seq[Project]](json)
+    read[Seq[Project]](json)
   }
 
 }
