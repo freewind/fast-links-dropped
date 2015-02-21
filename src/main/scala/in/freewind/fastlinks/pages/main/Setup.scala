@@ -38,13 +38,13 @@ object Setup extends TypedReactSpec with TypedEventListeners {
     <div className="setup">
       {
         if (self.state.working) {
-          <div onClick={self.openSetup}>setup [-]</div>
-          <div>
-            <input placeholder="url of projects data" ref="url" defaultValue={dataUrl.getOrElse("")}/>
+          <div onClick={self.openSetup} className="banner">setup [-]</div>
+          <div className="setup-body">
+            <input placeholder="url of projects data" ref="url" defaultValue={dataUrl.getOrElse("")} className="url"/>
             <button onClick={self.fetchData}>Fetch</button>
           </div>
         } else {
-          <div onClick={self.openSetup}>setup [+]</div>
+          <div onClick={self.openSetup} className="banner">setup [+]</div>
         }
       }
     </div>

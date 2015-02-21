@@ -1,6 +1,16 @@
+@windowWidth: 400px;
+@windowHeight: 400px;
+
 html, body {
-  height: 400px;
-  width: 400px;
+  width: @windowWidth;
+  height: @windowHeight;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  padding: 5px;
+  position: relative;
 }
 
 #config-page {
@@ -35,12 +45,19 @@ html, body {
 
 #main-page {
   .search-panel {
+    position: relative;
     .search {
-      width: 80%;
+      width: @windowWidth - 50;
     }
     .clear-search {
-      padding: 0 10px;
+      position: absolute;
+      right: 15px;
+      text-align: center;
       cursor: pointer;
+      color: #666666;
+      &:hover {
+        background-color: #EEEEEE;
+      }
     }
   }
   .all-links {
@@ -84,5 +101,20 @@ html, body {
   .setup {
     position: absolute;
     bottom: 0;
+    width: @windowWidth - 10;
+    .banner {
+      color: #999999;
+      text-align: center;
+      &:hover {
+        background-color: #EEEEEE;
+        cursor: pointer;
+      }
+    }
+    .setup-body {
+      padding: 5px 3px;
+      .url {
+        width: @windowWidth - 90;
+      }
+    }
   }
 }
