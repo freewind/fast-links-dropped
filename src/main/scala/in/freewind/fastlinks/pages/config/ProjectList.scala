@@ -2,7 +2,8 @@ package in.freewind.fastlinks.pages.config
 
 import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.fastlinks.{Keycode, Project}
+import in.freewind.fastlinks.Project
+import org.scalajs.dom.extensions.KeyCode
 
 object ProjectList extends TypedReactSpec with TypedEventListeners {
 
@@ -22,7 +23,7 @@ object ProjectList extends TypedReactSpec with TypedEventListeners {
 
     def newProject = input.onKeyUp(e => {
       val value = e.target.value.trim
-      if (!value.isEmpty && e.which == Keycode.Enter) {
+      if (!value.isEmpty && e.which == KeyCode.enter) {
         self.props.onNewProject(value)
       }
     })

@@ -6,7 +6,7 @@ import in.freewind.fastlinks._
 import in.freewind.fastlinks.pages.main.{Links, Setup}
 import in.freewind.fastlinks.wrappers.chrome.chrome._
 import org.scalajs.dom.HTMLInputElement
-
+import org.scalajs.dom.extensions.KeyCode
 import scala.scalajs.js
 
 object MainPage extends TypedReactSpec with TypedEventListeners {
@@ -55,9 +55,9 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
 
     val onKeyUp = input.onKeyUp(e => {
       e.which match {
-        case Keycode.Up => moveSelectedLink(-1)
-        case Keycode.Down => moveSelectedLink(1)
-        case Keycode.Enter => clickOnHighlightLink()
+        case KeyCode.up => moveSelectedLink(-1)
+        case KeyCode.down => moveSelectedLink(1)
+        case KeyCode.enter => clickOnHighlightLink()
         case _ =>
       }
     })
