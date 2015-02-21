@@ -46,13 +46,20 @@ object Setup extends TypedReactSpec with TypedEventListeners {
         if (self.state.working) {
           <div onClick={self.openSetup} className="banner">setup [-]</div>
           <div className="setup-body">
-            <input placeholder="url of projects data" ref="url" defaultValue={dataUrl.getOrElse("")} className="url"/>
-            {
-              self.state.loading match {
-                case true => <span className="loading"></span>
-                case false => <button onClick={self.fetchData}>Fetch</button>
+            <div>
+              <input placeholder="url of projects data" ref="url" defaultValue={dataUrl.getOrElse("")} className="url"/>
+              {
+                self.state.loading match {
+                  case true => <span className="loading"></span>
+                  case false => <button onClick={self.fetchData}>Fetch</button>
+                }
               }
-            }
+            </div>
+            <div className="help-links">
+              <a href="https://github.com/freewind/fast-links" target="_blank">project link</a>
+              |
+              <a href="https://github.com/freewind/fast-links" target="_blank">how to edit</a>
+            </div>
           </div>
         } else {
           <div onClick={self.openSetup} className="banner">setup [+]</div>
