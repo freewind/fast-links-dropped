@@ -9,7 +9,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object Setup extends TypedReactSpec with TypedEventListeners {
 
-  case class State(working: Boolean = false)
+  case class State(working: Boolean = false, loading: Boolean = false)
 
   case class Props(onDataFetched: (String, String) => Unit, dataUrl: Option[String] = None)
 
@@ -19,10 +19,16 @@ object Setup extends TypedReactSpec with TypedEventListeners {
 
     import self._
 
-    val fetchData = input.onKeyUp(e => {
+    val fetchData = input.onClick(e => {
       val url = refs("url").getDOMNode().asInstanceOf[HTMLInputElement].value.trim
-      Ajax.get(url).onSuccess { case xhr =>
+      setState(state.copy(loading = true))
+      val future = Ajax.get(url)
+      future.onSuccess { case xhr =>
         props.onDataFetched(url, xhr.responseText)
+        setState(state.copy(loading = false))
+      }
+      future.onFailure { case _ =>
+        setState(state.copy(loading = false))
       }
     })
 
@@ -41,7 +47,12 @@ object Setup extends TypedReactSpec with TypedEventListeners {
           <div onClick={self.openSetup} className="banner">setup [-]</div>
           <div className="setup-body">
             <input placeholder="url of projects data" ref="url" defaultValue={dataUrl.getOrElse("")} className="url"/>
-            <button onClick={self.fetchData}>Fetch</button>
+            {
+              self.state.loading match {
+                case true => <span className="loading"></span>
+                case false => <button onClick={self.fetchData}>Fetch</button>
+              }
+            }
           </div>
         } else {
           <div onClick={self.openSetup} className="banner">setup [+]</div>
