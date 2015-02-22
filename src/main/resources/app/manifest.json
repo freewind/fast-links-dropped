@@ -1,0 +1,16 @@
+{
+  "manifest_version": 2,
+  "name": "Fast Links App",
+  "description": "Manage useful links",
+  "version": "0.1",
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+  "permissions": [
+    "storage",
+    "https://ajax.googleapis.com/",
+    "https://raw.githubusercontent.com/freewind/wind-links-scala-js-react/master/src/main/resources/data/projects.json"
+  ]
+}

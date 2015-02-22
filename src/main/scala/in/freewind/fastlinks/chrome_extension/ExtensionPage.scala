@@ -1,15 +1,16 @@
-package in.freewind.fastlinks.pages
+package in.freewind.fastlinks.chrome_extension
 
 import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.fastlinks._
-import in.freewind.fastlinks.pages.main.{OneProject, Setup}
-import in.freewind.fastlinks.wrappers.chrome.chrome._
+import in.freewind.fastlinks.chrome_extension.main.{OneProject, Setup}
+import in.freewind.fastlinks.wrappers.chrome.chrome.storage
+import in.freewind.fastlinks.{DataConverter, Link, Project}
 import org.scalajs.dom.HTMLInputElement
 import org.scalajs.dom.extensions.KeyCode
+
 import scala.scalajs.js
 
-object MainPage extends TypedReactSpec with TypedEventListeners {
+object ExtensionPage extends TypedReactSpec with TypedEventListeners {
 
   private val RefSearch = "search"
   private val RefHighlightItem = "search-highlight-item"
@@ -90,14 +91,13 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
     }
   }
 
-  override def componentDidMount(self: MainPage.This): Unit = {
+  override def componentDidMount(self: ExtensionPage.This): Unit = {
     self.refs(RefSearch).getDOMNode().focus()
   }
 
   @scalax
   override def render(self: This) = {
     val searchResults = self.state.searchResults
-    val projects = self.state.projects
     <div id="main-page">
       <div className="search-panel">
         <input className="search" placeholder="Search" onChange={self.onSearch} onKeyUp={self.onKeyUp} ref={RefSearch}/>

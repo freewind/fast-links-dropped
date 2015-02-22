@@ -1,0 +1,47 @@
+@windowWidth: 400px;
+@windowHeight: 400px;
+
+html, body {
+  width: @windowWidth;
+  height: @windowHeight;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  padding: 5px;
+  position: relative;
+}
+
+#main-page {
+}
+
+#config-page {
+  .project-list {
+    position: absolute;
+    width: 150px;
+  }
+  .current-project {
+    background-color: green;
+  }
+  .project-profile {
+    position: absolute;
+    left: 150px;
+    .project-name {
+      padding: 10px;
+      border: 1px solid #EEE;
+    }
+    .project-desc {
+      padding: 10px;
+      border: 1px solid #EEE;
+    }
+    .project-group {
+      padding: 10px;
+      border: 1px solid #EEE;
+    }
+    .link {
+      padding: 10px;
+    }
+  }
+
+}

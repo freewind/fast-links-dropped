@@ -1,8 +1,8 @@
-package in.freewind.fastlinks.pages
+package in.freewind.fastlinks.chrome_app
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.fastlinks.pages.config.{ProjectList, ProjectProfile}
+import in.freewind.fastlinks.chrome_app.config.{ProjectProfile, ProjectList}
 import in.freewind.fastlinks.{Project, SampleData}
 
 object ConfigPage extends TypedReactSpec with TypedEventListeners {
@@ -53,4 +53,3 @@ object ConfigPage extends TypedReactSpec with TypedEventListeners {
   }
 
 }
-

@@ -1,27 +1,28 @@
 package in.freewind.fastlinks
 
 import com.xored.scalajs.react.React
-import in.freewind.fastlinks.pages.MainPage
-import org.scalajs.dom
+import in.freewind.fastlinks.chrome_app.{ConfigPage, AppPage}
+import in.freewind.fastlinks.chrome_extension.ExtensionPage
 import org.scalajs.dom.HTMLElement
 
-import scala.scalajs.js.JSApp
 import scala.scalajs.js.annotation.JSExport
 
-object App extends JSApp {
+@JSExport("App")
+object App {
 
   @JSExport
-  def hello(parent: HTMLElement) = {
+  def extension(parent: HTMLElement) = {
     React.renderComponent(
-      Hello(Hello.Props()),
+      ExtensionPage(ExtensionPage.Props()),
       parent
     )
   }
 
-  override def main(): Unit = {
+  @JSExport
+  def app(parent: HTMLElement) = {
     React.renderComponent(
-      MainPage(MainPage.Props()),
-      dom.document.getElementById("content").asInstanceOf[HTMLElement]
+      ConfigPage(ConfigPage.Props()),
+      parent
     )
   }
 

@@ -1,4 +1,4 @@
-package in.freewind.fastlinks.pages.main
+package in.freewind.fastlinks.chrome_extension.main
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}

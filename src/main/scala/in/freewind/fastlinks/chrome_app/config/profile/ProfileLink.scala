@@ -1,10 +1,10 @@
-package in.freewind.fastlinks.pages.config.profile
+package in.freewind.fastlinks.chrome_app.config.profile
 
 import in.freewind.fastlinks.RichString
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks.Link
-import in.freewind.fastlinks.pages.common.Editable
+import in.freewind.fastlinks.common.Editable
 
 object ProfileLink extends TypedReactSpec with TypedEventListeners {
 
