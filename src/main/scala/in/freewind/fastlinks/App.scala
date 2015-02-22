@@ -1,7 +1,7 @@
 package in.freewind.fastlinks
 
 import com.xored.scalajs.react.React
-import in.freewind.fastlinks.chrome_app.{ConfigPage, AppPage}
+import in.freewind.fastlinks.chrome_app.ConfigPage
 import in.freewind.fastlinks.chrome_extension.ExtensionPage
 import org.scalajs.dom.HTMLElement
 

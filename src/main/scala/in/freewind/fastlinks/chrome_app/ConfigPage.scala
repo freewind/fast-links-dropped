@@ -2,7 +2,7 @@ package in.freewind.fastlinks.chrome_app
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.fastlinks.chrome_app.config.{ProjectProfile, ProjectList}
+import in.freewind.fastlinks.chrome_app.config.{Header, ProjectList, ProjectProfile}
 import in.freewind.fastlinks.{Project, SampleData}
 
 object ConfigPage extends TypedReactSpec with TypedEventListeners {
@@ -38,6 +38,7 @@ object ConfigPage extends TypedReactSpec with TypedEventListeners {
   override def render(self: This) = {
     val (projects, currentProject) = (self.state.projects, self.state.currentProject)
     <div id="config-page">
+      { Header(Header.Props()) }
       <div className="project-list">
         {ProjectList(ProjectList.Props(projects, currentProject, self.onSelectProject, self.onNewProject))}
       </div>

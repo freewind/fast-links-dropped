@@ -1,5 +1,9 @@
 package in.freewind.fastlinks
 
+case class Meta(categories: Seq[Category])
+
+case class Category(name: String, projects: Seq[Project], description: Option[String] = None)
+
 case class Project(name: String,
                    basicLinks: Seq[Link] = Nil,
                    moreLinkGroups: Seq[LinkGroup] = Nil,
