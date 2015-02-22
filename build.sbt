@@ -28,14 +28,14 @@ seq(lessSettings: _*)
 lazy val chrome = taskKey[Unit]("Generate the chrome app")
 
 chrome <<= (fastOptJS in Compile) map { _ =>
-  val to = new File("./target/chrome")
-  IO.delete(to)
-  IO.createDirectory(to)
   Seq("app", "extension").foreach { dir =>
-    IO.copyDirectory(new File("./target/scala-2.11/classes", dir), new File(to, dir))
+    val to = new sbt.File("./target/chrome", dir)
+    to.listFiles.foreach(IO.delete)
+    IO.createDirectory(to)
+    IO.copyDirectory(new File("./target/scala-2.11/classes", dir), to)
     Seq("fast-links-jsdeps.js", "fast-links-fastopt.js", "fast-links-fastopt.js.map").foreach(fileName =>
-      IO.copyFile(new File("./target/scala-2.11/" + fileName), new File(to, s"$dir/js/$fileName")))
-    val cssPath = s"$dir/css/main.css"
-    IO.copyFile(new File("./target/scala-2.11/resource_managed/main/resources", cssPath), new File(to, cssPath))
+      IO.copyFile(new File("./target/scala-2.11/" + fileName), new File(to, s"js/$fileName")))
+    val cssPath = "css/main.css"
+    IO.copyFile(new File(s"./target/scala-2.11/resource_managed/main/resources/$dir", cssPath), new File(to, cssPath))
   }
 }
