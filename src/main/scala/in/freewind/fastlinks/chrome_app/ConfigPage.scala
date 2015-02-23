@@ -16,7 +16,7 @@ object ConfigPage extends TypedReactSpec with TypedEventListeners {
                    currentProject: Option[Project] = None,
                    storageData: Option[AppStorageData] = None)
 
-  case class Props()
+  case class Props(goToMainPage: () => Unit)
 
   override def getInitialState(self: This) = {
     import self._
@@ -71,7 +71,7 @@ object ConfigPage extends TypedReactSpec with TypedEventListeners {
   override def render(self: This) = {
     val (currentCategory, currentProject) = (self.state.currentCategory, self.state.currentProject)
     <div id="config-page">
-      { Header(Header.Props(self.state.meta, self.selectCategory, self.saveStorageData)) }
+      { Header(Header.Props(self.state.meta, self.selectCategory, self.saveStorageData, self.props.goToMainPage)) }
       <div className="project-list">
         {ProjectList(ProjectList.Props(currentCategory, currentProject, self.onSelectProject, self.onNewProject))}
       </div>

@@ -1,7 +1,7 @@
 package in.freewind.fastlinks
 
 import com.xored.scalajs.react.React
-import in.freewind.fastlinks.chrome_app.ConfigPage
+import in.freewind.fastlinks.chrome_app.AppEntry
 import in.freewind.fastlinks.chrome_extension.ExtensionPage
 import org.scalajs.dom.HTMLElement
 
@@ -21,7 +21,7 @@ object App {
   @JSExport
   def app(parent: HTMLElement) = {
     React.renderComponent(
-      ConfigPage(ConfigPage.Props()),
+      AppEntry(AppEntry.Props()),
       parent
     )
   }

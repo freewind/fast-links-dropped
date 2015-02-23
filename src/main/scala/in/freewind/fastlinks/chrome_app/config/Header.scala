@@ -12,7 +12,10 @@ object Header extends TypedReactSpec with TypedEventListeners {
 
   case class State()
 
-  case class Props(meta: Option[Meta], selectCategory: Category => Unit, saveStorageData: AppStorageData => Unit)
+  case class Props(meta: Option[Meta],
+                   selectCategory: Category => Unit,
+                   saveStorageData: AppStorageData => Unit,
+                   goToMainPage: () => Unit)
 
   override def getInitialState(self: This) = {
     State()
@@ -32,6 +35,9 @@ object Header extends TypedReactSpec with TypedEventListeners {
       self.props.selectCategory(category)
     })
 
+    val goToMainPage = element.onClick(e => {
+      self.props.goToMainPage()
+    })
   }
 
 
@@ -49,6 +55,7 @@ object Header extends TypedReactSpec with TypedEventListeners {
       <span>
         <button onClick={self.chooseDataDir}>Choose Data Dir</button>
       </span>
+      <button onClick={self.goToMainPage}>Go to main page</button>
     </div>
   }
 
