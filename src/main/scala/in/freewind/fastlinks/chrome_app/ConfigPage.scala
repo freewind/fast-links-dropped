@@ -5,10 +5,8 @@ import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks.chrome_app.config.{Header, ProjectList, ProjectProfile}
 import in.freewind.fastlinks.libs.Chrome
 import in.freewind.fastlinks.wrappers.chrome.DirectoryEntry
-import in.freewind.fastlinks.{Category, Meta, Project}
-import upickle._
+import in.freewind.fastlinks.{MetaFiles, Category, Meta, Project}
 
-import scala.concurrent.{Future, Promise}
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
 object ConfigPage extends TypedReactSpec with TypedEventListeners {
@@ -20,20 +18,6 @@ object ConfigPage extends TypedReactSpec with TypedEventListeners {
 
   case class Props()
 
-  private def readMeta(dir: DirectoryEntry): Future[Meta] = {
-    val p = Promise[Meta]()
-    Chrome.fileSystem.readFile(dir, "_meta_.json").map(read[_Meta_]).foreach { _meta_ =>
-      val categoryFutures = _meta_.categories.map(category =>
-        Chrome.fileSystem.readFile(dir, category.filename).map(read[Seq[Project]])
-          .map(ps => new Category(category.name, ps, category.description))
-      )
-      Future.sequence(categoryFutures).foreach { categories =>
-        p.success(new Meta(categories))
-      }
-    }
-    p.future
-  }
-
   override def getInitialState(self: This) = {
     import self._
     AppStorageData.load().foreach {
@@ -42,9 +26,9 @@ object ConfigPage extends TypedReactSpec with TypedEventListeners {
         Chrome.fileSystem.isRestorable(localId).foreach {
           case true => Chrome.fileSystem.restore(localId).foreach { entry =>
             val dir = entry.asInstanceOf[DirectoryEntry]
-            readMeta(dir).foreach(m => setState(state.copy(meta = Some(m))))
+            MetaFiles.readMeta(dir).foreach(m => setState(state.copy(meta = Some(m))))
           }
-          case _ => println("#### no restored")
+          case _ => println("#### data dir can't be restored")
         }
       case _ =>
     }
@@ -104,6 +88,3 @@ object ConfigPage extends TypedReactSpec with TypedEventListeners {
 
 }
 
-case class _Meta_(categories: Seq[_Category_])
-
-case class _Category_(name: String, filename: String, description: Option[String])
