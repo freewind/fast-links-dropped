@@ -19,7 +19,7 @@ trait ChromeFileSystem extends js.Object {
   def isWritableEntry(entry: Entry, callback: js.Function1[Boolean, Unit] = ???): Unit = js.native
 }
 
-trait Entry extends js.Object {
+trait Entry extends Blob {
   val fullPath: String = js.native
   val name: String = js.native
   val isDirectory: Boolean = js.native

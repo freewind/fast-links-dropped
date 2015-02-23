@@ -42,30 +42,19 @@ object Header extends TypedReactSpec with TypedEventListeners {
 
   private def readFile(dir: DirectoryEntry, fileName: String): Future[String] = {
     val p = Promise[String]()
-    dir.getFile("_meta_.json", js.Dynamic.literal(), (entry: FileEntry) => {
-      dom.console.dir(entry)
-      println(s"${entry.isFile } ${entry.isDirectory } ")
+    dir.getFile(fileName, js.Dynamic.literal(), (entry: FileEntry) => {
       if (entry != null) {
         entry.file((file: FileEntry) => {
-          println("######## entry.createReader: ")
           val reader = new FileReader()
-          println("######### reader created:" + reader)
-          reader.onload = (event: UIEvent) => {
-            println("############ read file: " + event)
-            ()
-          }
           reader.onloadend = (event: ProgressEvent) => {
-            println("############ read file: " + reader.result)
             p.success(reader.result.toString)
             ()
           }
           reader.onerror = (event: Event) => {
-            println("######### read error")
             p.failure(new IOException("read error"))
             ()
           }
-          println("###### going to read")
-          reader.readAsText(entry.asInstanceOf[Blob])
+          reader.readAsText(file)
           ()
         })
       }

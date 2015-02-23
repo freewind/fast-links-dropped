@@ -2,7 +2,7 @@
   "categories": [
     {
       "name": "Scala",
-      "filename": "projects",
+      "filename": "projects.json",
       "description": ["Links of Scala"]
     }
   ]
