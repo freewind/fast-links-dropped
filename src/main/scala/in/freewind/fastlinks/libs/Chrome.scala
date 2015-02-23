@@ -1,9 +1,13 @@
 package in.freewind.fastlinks.libs
 
+import java.io.IOException
+
 import in.freewind.fastlinks.wrappers.chrome._
+import org.scalajs.dom.{Event, ProgressEvent, FileReader}
 
 import scala.concurrent.{Promise, Future}
 import scala.scalajs.js
+import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
 object Chrome {
 
@@ -40,6 +44,30 @@ object Chrome {
     def retain(entry: Entry): String = {
       chrome.fileSystem.retainEntry(entry)
     }
+
+    def readFile(dir: DirectoryEntry, fileName: String): Future[String] = {
+      val p = Promise[String]()
+      dir.getFile(fileName, js.Dynamic.literal(), (entry: FileEntry) => {
+        if (entry != null) {
+          entry.file((file: FileEntry) => {
+            val reader = new FileReader()
+            reader.onloadend = (event: ProgressEvent) => {
+              p.success(reader.result.toString)
+              ()
+            }
+            reader.onerror = (event: Event) => {
+              p.failure(new IOException("read error"))
+              ()
+            }
+            reader.readAsText(file)
+            ()
+          })
+        }
+        ()
+      })
+      p.future
+    }
+
   }
 
   val storage = new {

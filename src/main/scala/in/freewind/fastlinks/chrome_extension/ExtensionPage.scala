@@ -8,7 +8,6 @@ import org.scalajs.dom.HTMLInputElement
 import org.scalajs.dom.extensions.KeyCode
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
-
 object ExtensionPage extends TypedReactSpec with TypedEventListeners {
 
   private val RefSearch = "search"

@@ -4,6 +4,11 @@
       "name": "Scala",
       "filename": "projects.json",
       "description": ["Links of Scala"]
+    },
+    {
+      "name": "Rust",
+      "filename": "rust.json",
+      "description": ["Links of Rust"]
     }
   ]
 }

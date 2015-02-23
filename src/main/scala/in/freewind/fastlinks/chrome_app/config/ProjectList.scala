@@ -2,14 +2,14 @@ package in.freewind.fastlinks.chrome_app.config
 
 import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.fastlinks.Project
+import in.freewind.fastlinks.{Category, Project}
 import org.scalajs.dom.extensions.KeyCode
 
 object ProjectList extends TypedReactSpec with TypedEventListeners {
 
   case class State()
 
-  case class Props(projects: Seq[Project],
+  case class Props(currentCategory: Option[Category],
                    currentProject: Option[Project],
                    onSelectProject: Project => Unit,
                    onNewProject: String => Unit)
@@ -31,9 +31,10 @@ object ProjectList extends TypedReactSpec with TypedEventListeners {
 
   @scalax
   override def render(self: This) = {
+    val projects = self.props.currentCategory.toList.flatMap(_.projects)
     <div>
       {
-        self.props.projects.map { p =>
+        projects.map { p =>
           val className = ClassName("current-project" -> (Some(p) == self.props.currentProject))
           <div>
             <button onClick={self.selectProject(p)} className={className}>
