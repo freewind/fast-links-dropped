@@ -4,10 +4,10 @@ import java.io.IOException
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
+import in.freewind.fastlinks.libs.Chrome
 import in.freewind.fastlinks.{Project, Category, Meta}
 import in.freewind.fastlinks.chrome_app.AppStorageData
 import in.freewind.fastlinks.wrappers.chrome._
-import org.scalajs.dom
 import org.scalajs.dom._
 
 import scala.concurrent.{Future, Promise}
@@ -21,24 +21,6 @@ object Header extends TypedReactSpec with TypedEventListeners {
   case class State(meta: Option[Meta] = None, storageData: Option[AppStorageData] = None)
 
   case class Props()
-
-  private def isRestorable(id: String): Future[Boolean] = {
-    val p = Promise[Boolean]()
-    chrome.fileSystem.isRestorable(id, (isRestorable: Boolean) => {
-      p.success(isRestorable)
-      ()
-    })
-    p.future
-  }
-
-  private def restore(id: String): Future[Entry] = {
-    val p = Promise[Entry]()
-    chrome.fileSystem.restoreEntry(id, (entry: Entry) => {
-      p.success(entry)
-      ()
-    })
-    p.future
-  }
 
   private def readFile(dir: DirectoryEntry, fileName: String): Future[String] = {
     val p = Promise[String]()
@@ -81,8 +63,8 @@ object Header extends TypedReactSpec with TypedEventListeners {
     AppStorageData.load().foreach {
       case Some(data@AppStorageData(Some(localPath), Some(localId))) =>
         setState(state.copy(storageData = Some(data)))
-        isRestorable(localId).foreach {
-          case true => restore(localId).foreach { entry =>
+        Chrome.fileSystem.isRestorable(localId).foreach {
+          case true => Chrome.fileSystem.restore(localId).foreach { entry =>
             val dir = entry.asInstanceOf[DirectoryEntry]
             readMeta(dir).foreach(m => setState(state.copy(meta = Some(m))))
           }
@@ -96,20 +78,9 @@ object Header extends TypedReactSpec with TypedEventListeners {
 
   implicit class Closure(self: This) {
 
-    private def chooseDirectory(): Future[(Entry, String)] = {
-      val p = Promise[(Entry, String)]()
-      chrome.fileSystem.chooseEntry(js.Dynamic.literal("type" -> "openDirectory"), (dir: Entry) => {
-        chrome.fileSystem.getDisplayPath(dir.asInstanceOf[DirectoryEntry], (path: String) => {
-          p.success((dir, path))
-          ()
-        })
-      })
-      p.future
-    }
-
     val chooseDataDir = button.onClick(e => {
-      chooseDirectory().foreach { case (dir, path) =>
-        val localDataId = chrome.fileSystem.retainEntry(dir)
+      Chrome.fileSystem.chooseDirectory().foreach { case (dir, path) =>
+        val localDataId = Chrome.fileSystem.retain(dir)
         val storageData = new AppStorageData(localDataPath = Some(path), localDataId = Some(localDataId))
         AppStorageData.save(storageData).foreach(data => self.setState(self.state.copy(storageData = Some(data))))
       }
