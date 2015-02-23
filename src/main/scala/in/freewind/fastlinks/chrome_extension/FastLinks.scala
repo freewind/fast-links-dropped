@@ -2,35 +2,24 @@ package in.freewind.fastlinks.chrome_extension
 
 import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.fastlinks.chrome_extension.main.{OneProject, Setup}
-import in.freewind.fastlinks.{DataConverter, Link, Project}
+import in.freewind.fastlinks.chrome_extension.main.OneProject
+import in.freewind.fastlinks.{Link, Project}
 import org.scalajs.dom.HTMLInputElement
 import org.scalajs.dom.extensions.KeyCode
-import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
-object ExtensionPage extends TypedReactSpec with TypedEventListeners {
+object FastLinks extends TypedReactSpec with TypedEventListeners {
 
   private val RefSearch = "search"
   private val RefHighlightItem = "search-highlight-item"
   private val HighlightClass = "highlight-search-item"
 
-  case class State(projects: Seq[Project] = Nil,
-                   keyword: Option[String] = None,
+  case class State(keyword: Option[String] = None,
                    searchResults: Seq[Result] = Nil,
-                   highlightSearchItem: Option[Result] = None,
-                   dataUrl: Option[String] = None,
-                   storageData: Option[ExtensionStorageData] = None)
+                   highlightSearchItem: Option[Result] = None)
 
-  case class Props()
+  case class Props(projects: Seq[Project])
 
-  override def getInitialState(self: This) = {
-    for {
-      dataOpt <- ExtensionStorageData.load()
-      data <- dataOpt
-    } self.setState(self.state.copy(projects = data.projects, dataUrl = data.dataUrl, storageData = Some(data)))
-
-    State()
-  }
+  override def getInitialState(self: This) = State()
 
   implicit class Closure(self: This) {
 
@@ -42,7 +31,7 @@ object ExtensionPage extends TypedReactSpec with TypedEventListeners {
 
     val onSearch = input.onChange(e => {
       val keyword = Option(getKeyword).filterNot(_.isEmpty)
-      val results = keyword.map(filterSearchResult(self.state.projects)).getOrElse(Nil)
+      val results = keyword.map(filterSearchResult(self.props.projects)).getOrElse(Nil)
 
       setState(state.copy(keyword = keyword,
         searchResults = results,
@@ -66,13 +55,6 @@ object ExtensionPage extends TypedReactSpec with TypedEventListeners {
       onSearch.apply(null)
     })
 
-    def onDataFetched(url: String, json: String): Unit = {
-      val storageData = new ExtensionStorageData(projects = DataConverter.parse(json), dataUrl = Some(url))
-      ExtensionStorageData.save(storageData).foreach { data =>
-        self.setState(state.copy(projects = data.projects, dataUrl = data.dataUrl))
-      }
-    }
-
     private def clickOnHighlightLink(): Unit = {
       refs(RefHighlightItem).getDOMNode().click()
     }
@@ -87,14 +69,14 @@ object ExtensionPage extends TypedReactSpec with TypedEventListeners {
     }
   }
 
-  override def componentDidMount(self: ExtensionPage.This): Unit = {
+  override def componentDidMount(self: FastLinks.This): Unit = {
     self.refs(RefSearch).getDOMNode().focus()
   }
 
   @scalax
   override def render(self: This) = {
     val searchResults = self.state.searchResults
-    <div id="main-page">
+    <div>
       <div className="search-panel">
         <input className="search" placeholder="Search" onChange={self.onSearch} onKeyUp={self.onKeyUp} ref={RefSearch}/>
         <span onClick={self.onClearSearch} className="clear-search">[X]</span>
@@ -120,14 +102,13 @@ object ExtensionPage extends TypedReactSpec with TypedEventListeners {
           case _ =>
             <div className="all-links">
               {
-                self.state.projects.map(p =>
+                self.props.projects.map(p =>
                   OneProject(OneProject.Props(p))
                 )
               }
             </div>
         }
       }
-      {Setup(Setup.Props(self.onDataFetched, self.state.dataUrl))}
     </div>
   }
 

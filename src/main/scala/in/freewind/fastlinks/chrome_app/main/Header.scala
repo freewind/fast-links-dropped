@@ -2,19 +2,20 @@ package in.freewind.fastlinks.chrome_app.main
 
 import com.xored.scalajs.react.{scalax, TypedReactSpec}
 import com.xored.scalajs.react.util.TypedEventListeners
+import in.freewind.fastlinks.chrome_app.AppBackend
 
 object Header extends TypedReactSpec with TypedEventListeners {
 
   case class State()
 
-  case class Props(goToConfigPage: () => Unit)
+  case class Props(appBackend: AppBackend)
 
   override def getInitialState(self: This) = State()
 
   implicit class Closure(self: This) {
 
     val goToConfigPage = button.onClick(e => {
-      self.props.goToConfigPage()
+      self.props.appBackend.goToConfigPage()
     })
   }
 

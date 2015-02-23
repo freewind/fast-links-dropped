@@ -2,11 +2,11 @@ package in.freewind.fastlinks.chrome_app.config
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.fastlinks.chrome_app.AppStorageData
+import in.freewind.fastlinks.chrome_app.{AppBackend, AppStorageData}
 import in.freewind.fastlinks.libs.Chrome
 import in.freewind.fastlinks.{Category, Meta}
-import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
+import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
 object Header extends TypedReactSpec with TypedEventListeners {
 
@@ -14,8 +14,7 @@ object Header extends TypedReactSpec with TypedEventListeners {
 
   case class Props(meta: Option[Meta],
                    selectCategory: Category => Unit,
-                   saveStorageData: AppStorageData => Unit,
-                   goToMainPage: () => Unit)
+                   appBackend: AppBackend)
 
   override def getInitialState(self: This) = {
     State()
@@ -23,11 +22,13 @@ object Header extends TypedReactSpec with TypedEventListeners {
 
   implicit class Closure(self: This) {
 
+    import self._
+
     val chooseDataDir = button.onClick(e => {
       Chrome.fileSystem.chooseDirectory().foreach { case (dir, path) =>
         val localDataId = Chrome.fileSystem.retain(dir)
         val storageData = new AppStorageData(localDataPath = Some(path), localDataId = Some(localDataId))
-        self.props.saveStorageData(storageData)
+        props.appBackend.saveStorageData(storageData)
       }
     })
 
@@ -36,7 +37,7 @@ object Header extends TypedReactSpec with TypedEventListeners {
     })
 
     val goToMainPage = element.onClick(e => {
-      self.props.goToMainPage()
+      props.appBackend.goToMainPage()
     })
   }
 

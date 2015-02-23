@@ -3,75 +3,61 @@ package in.freewind.fastlinks.chrome_app
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks.chrome_app.config.{Header, ProjectList, ProjectProfile}
-import in.freewind.fastlinks.libs.Chrome
-import in.freewind.fastlinks.wrappers.chrome.DirectoryEntry
-import in.freewind.fastlinks.{MetaFiles, Category, Meta, Project}
-
-import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
+import in.freewind.fastlinks.{Category, Meta, Project}
 
 object ConfigPage extends TypedReactSpec with TypedEventListeners {
 
-  case class State(meta: Option[Meta] = None,
-                   currentCategory: Option[Category] = None,
-                   currentProject: Option[Project] = None,
-                   storageData: Option[AppStorageData] = None)
+  case class State(currentCategory: Option[Category] = None,
+                   currentProject: Option[Project] = None)
 
-  case class Props(goToMainPage: () => Unit)
+  case class Props(meta: Option[Meta] = None, appBackend: AppBackend)
 
-  override def getInitialState(self: This) = {
-    import self._
-    AppStorageData.load().foreach {
-      case Some(data@AppStorageData(Some(localPath), Some(localId))) =>
-        setState(state.copy(storageData = Some(data)))
-        Chrome.fileSystem.isRestorable(localId).foreach {
-          case true => Chrome.fileSystem.restore(localId).foreach { entry =>
-            val dir = entry.asInstanceOf[DirectoryEntry]
-            MetaFiles.readMeta(dir).foreach(m => setState(state.copy(meta = Some(m))))
-          }
-          case _ => println("#### data dir can't be restored")
-        }
-      case _ =>
-    }
-    State()
-  }
-
+  override def getInitialState(self: This) = State()
 
   implicit class Closure(self: This) {
 
     import self._
 
+    val backend = self.props.appBackend
     def onSelectProject(project: Project) = {
       setState(state.copy(currentProject = Some(project)))
     }
 
     def onNewProject(projectName: String) = {
-      val newProject = Project(projectName)
-      setState(state.copy(
-        currentCategory = self.state.currentCategory.map(c => c.copy(projects = c.projects :+ newProject)),
-        currentProject = Some(newProject)))
+      for {
+        meta <- props.meta
+        currentCategory <- state.currentCategory
+        newProject = Project(projectName)
+        newCurrentCategory = currentCategory.copy(projects = currentCategory.projects :+ newProject)
+      } {
+        setState(state.copy(currentCategory = Some(newCurrentCategory), currentProject = Some(newProject)))
+        backend.updateMeta(meta.copy(categories = meta.categories.replace(currentCategory, newCurrentCategory)))
+      }
     }
 
     def updateProject(oldProject: Project, newProject: Project): Unit = {
-      setState(state.copy(
-        currentCategory = self.state.currentCategory.map(c => c.copy(projects = c.projects.replace(oldProject, newProject))),
-        currentProject = Some(newProject)))
+      for {
+        meta <- props.meta
+        currentCategory <- state.currentCategory
+        newCurrentCategory = currentCategory.copy(projects = currentCategory.projects.replace(oldProject, newProject))
+      } {
+        setState(state.copy(currentCategory = Some(newCurrentCategory), currentProject = Some(newProject)))
+        backend.updateMeta(meta.copy(categories = meta.categories.replace(currentCategory, newCurrentCategory)))
+      }
     }
 
     def selectCategory(category: Category): Unit = {
       setState(state.copy(currentCategory = Some(category), currentProject = category.projects.headOption))
     }
 
-    def saveStorageData(storageData: AppStorageData): Unit = {
-      AppStorageData.save(storageData).foreach(data => setState(state.copy(storageData = Some(data))))
-    }
-
   }
 
   @scalax
   override def render(self: This) = {
+    val appBackend = self.props.appBackend
     val (currentCategory, currentProject) = (self.state.currentCategory, self.state.currentProject)
     <div id="config-page">
-      { Header(Header.Props(self.state.meta, self.selectCategory, self.saveStorageData, self.props.goToMainPage)) }
+      { Header(Header.Props(self.props.meta, self.selectCategory, appBackend)) }
       <div className="project-list">
         {ProjectList(ProjectList.Props(currentCategory, currentProject, self.onSelectProject, self.onNewProject))}
       </div>
