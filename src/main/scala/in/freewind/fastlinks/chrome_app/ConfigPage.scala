@@ -57,7 +57,7 @@ object ConfigPage extends TypedReactSpec with TypedEventListeners {
     val appBackend = self.props.appBackend
     val (currentCategory, currentProject) = (self.state.currentCategory, self.state.currentProject)
     <div id="config-page">
-      { Header(Header.Props(self.props.meta, self.selectCategory, appBackend)) }
+      { Header(Header.Props(self.props.meta, self.state.currentCategory, self.selectCategory, appBackend)) }
       <div className="project-list">
         {ProjectList(ProjectList.Props(currentCategory, currentProject, self.onSelectProject, self.onNewProject))}
       </div>

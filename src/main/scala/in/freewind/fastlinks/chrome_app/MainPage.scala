@@ -22,6 +22,15 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
     }
   }
 
+  // FIXME duplicated code
+  override def componentWillMount(self: MainPage.This): Unit = {
+    self.props.meta.map { meta =>
+      val currentCategory = meta.categories.headOption
+      val currentProject = currentCategory.flatMap(_.projects.headOption)
+      self.setState(self.state.copy(currentCategory = currentCategory, currentProject = currentProject))
+    }
+  }
+
   implicit class Closure(self: This) {
 
     import self._
@@ -33,8 +42,8 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
 
   @scalax
   override def render(self: This) = {
-    <div>
-      { Header(Header.Props(self.props.meta, self.selectCategory, self.props.appBackend)) }
+    <div id="main-page">
+      { Header(Header.Props(self.props.meta, self.state.currentCategory, self.selectCategory, self.props.appBackend)) }
       <div>
         {
           FastLinks(FastLinks.Props(projects = self.state.currentCategory.map(_.projects).getOrElse(Nil)))

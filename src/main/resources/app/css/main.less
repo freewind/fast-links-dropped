@@ -13,7 +13,82 @@ body {
   position: relative;
 }
 
+.current-category {
+  background-color: green;
+}
+
 #main-page {
+  .search-panel {
+    position: relative;
+    .search {
+      width: @windowWidth - 50;
+    }
+    .clear-search {
+      position: absolute;
+      right: 15px;
+      text-align: center;
+      cursor: pointer;
+      color: #666666;
+      &:hover {
+        background-color: #EEEEEE;
+      }
+    }
+  }
+  .all-links {
+    overflow: auto;
+    max-height: @windowHeight - 30;
+    .show-description {
+      color: #999999;
+      cursor: pointer;
+      font-size: 8px;
+      margin-left: 3px;
+      &:hover {
+        background-color: #EEEEEE;
+      }
+    }
+    .project-description, .link-description {
+      color: #555555;
+      padding: 2px;
+      background-color: #F6F6F6;
+      margin: 2px 0 8px;
+    }
+    .link-name {
+      margin-right: 5px;
+      color: #3360ba;
+    }
+    .link-url {
+
+    }
+    .project-name {
+      padding: 2px 0;
+      margin: 3px 0;
+      font-weight: bold;
+      border-bottom: 1px solid #eeeeee;
+    }
+    .stars {
+      font-size: 8px;
+      color: #cd801e;
+      padding-left: 5px;
+    }
+    .group-links {
+      .group-name {
+        padding: 2px 0;
+      }
+    }
+  }
+  .search-results {
+    padding: 5px 0;
+    .highlight-search-item {
+      background-color: #EEEEEE;
+    }
+    .result-name {
+      margin-right: 5px;
+      color: #3360ba;
+    }
+    .result-item {
+      padding: 3px 0;
+    }
+  }
 }
 
 #config-page {
