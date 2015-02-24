@@ -112,21 +112,25 @@ object FastLinks extends TypedReactSpec with TypedEventListeners {
     </div>
   }
 
-  case class Result(projectName: String, link: Link)
+  case class Result(projectName: String, link: Link, weight: Int)
 
   private def filterSearchResult(projects: Seq[Project])(keyword: String): Seq[Result] = {
     def contain(s1: String, s2: String): Boolean = {
       s1.toLowerCase.contains(s2.toLowerCase)
     }
-    def matches(link: Link, keyword: String): Boolean = {
-      contain(link.url, keyword) || link.name.exists(contain(_, keyword))
+    def matches(project: Project, link: Link, keyword: String): Int = {
+      if (contain(link.url, keyword)) 3
+      else if (link.name.exists(contain(_, keyword))) 2
+      else if (contain(project.name, keyword)) 1
+      else 0
     }
 
-    for {
+    val results = for {
       project <- projects
       link <- project.basicLinks ++: project.moreLinkGroups.flatMap(_.links)
-      if matches(link, keyword)
-    } yield Result(project.name, link)
+    } yield Result(project.name, link, matches(project, link, keyword))
+
+    results.filter(_.weight > 0).sortBy(r => -r.weight)
   }
 
 }
