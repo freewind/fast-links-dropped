@@ -30,6 +30,11 @@ object ProjectList extends TypedReactSpec with TypedEventListeners {
     })
   }
 
+  private def showStars(stars: Option[Int]) = stars match {
+    case Some(n) => (1 to n).toList.map(_ => "★")
+    case _ => ""
+  }
+
   @scalax
   override def render(self: This) = {
     val projects = self.props.currentCategory.toList.flatMap(_.projects)
@@ -41,6 +46,7 @@ object ProjectList extends TypedReactSpec with TypedEventListeners {
             <button onClick={self.selectProject(p)} className={className}>
               {p.name}
             </button>
+            <span className="stars">{showStars(p.stars)}</span>
           </div>
         }
       }
