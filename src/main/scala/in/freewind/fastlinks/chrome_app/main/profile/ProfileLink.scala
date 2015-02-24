@@ -1,10 +1,9 @@
 package in.freewind.fastlinks.chrome_app.main.profile
 
-import in.freewind.fastlinks.RichString
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.fastlinks.Link
-import in.freewind.fastlinks.common.Editable
+import in.freewind.fastlinks.{Link, RichString}
+import in.freewind.fastlinks.common.{A, Editable}
 
 object ProfileLink extends TypedReactSpec with TypedEventListeners {
 
@@ -47,7 +46,11 @@ object ProfileLink extends TypedReactSpec with TypedEventListeners {
         {
           link.name.map(name => <span className="link-name">{Editable.Input(allowEditing, name, self.updateName)}</span>)
         }
-        <span className="link-url">{Editable.Input(allowEditing, link.url, self.updateUrl)}</span>
+        <span className="link-url">
+          {
+            Editable.Input(allowEditing, link.url, self.updateUrl, normalPlaceholder = Some(A(A.Props(link.url, link.url))))
+          }
+        </span>
         {
           link.description.map(_ => <span onClick={self.toggleDescription} className="link-show-description">[+]</span>)
         }

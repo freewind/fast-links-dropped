@@ -2,9 +2,9 @@ package in.freewind.fastlinks.chrome_app.main
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.fastlinks.common.Editable
+import in.freewind.fastlinks.common.{Stars, Editable}
 import in.freewind.fastlinks.{LinkGroup, Link, Project}
-import in.freewind.fastlinks.chrome_app.main.profile.{ProfileStars, ProfileLinks}
+import in.freewind.fastlinks.chrome_app.main.profile.{EditingStars, ProfileLinks}
 
 object ProjectProfile extends TypedReactSpec with TypedEventListeners {
 
@@ -38,8 +38,8 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
       props.updateProject(project, project.copy(name = newName))
     }
 
-    def updateStars(value: Int): Unit = {
-      props.updateProject(project, project.copy(stars = Some(value)))
+    def updateStars(value: String): Unit = {
+      props.updateProject(project, project.copy(stars = Some(value.toInt)))
     }
 
     def updateLinksOfGroup(linkGroup: LinkGroup)(newLinks: Seq[Link]): Unit = {
@@ -60,7 +60,14 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
     val allowEditing = self.props.allowEditing
     <div>
       {Editable.Input(allowEditing, project.name, self.updateProjectName, Some("project-name"))}
-      {ProfileStars(ProfileStars.Props(allowEditing, project.stars, self.updateStars))}
+      <div className="project-stars">
+        {
+          Editable.Input(allowEditing, project.stars.map(_.toString).getOrElse(""), self.updateStars,
+            normalPlaceholder = Some(Stars(Stars.Props(project.stars))),
+            editingPlaceholder = Some(EditingStars(EditingStars.Props(project.stars)))
+          )
+        }
+      </div>
       {Editable.Textarea(allowEditing, project.description.getOrElse("..."), self.updateDesc, Some("project-description"))}
       {
         <div className="project-group">

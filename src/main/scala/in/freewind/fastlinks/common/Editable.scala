@@ -1,12 +1,10 @@
 package in.freewind.fastlinks.common
 
 import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
-import com.xored.scalajs.react.{TypedReactSpec, scalax}
+import com.xored.scalajs.react.{ReactDOM, TypedReactSpec, scalax}
 import org.scalajs.dom.HTMLInputElement
 
 object Editable extends TypedReactSpec with TypedEventListeners {
-
-  private val Key = "input"
 
   sealed trait InputType
 
@@ -16,14 +14,18 @@ object Editable extends TypedReactSpec with TypedEventListeners {
                    allowEditing: Boolean,
                    value: String,
                    onOk: String => Unit,
-                   className: Option[String])
+                   className: Option[String],
+                   normalPlaceholder: Option[ReactDOM],
+                   editingPlaceholder: Option[ReactDOM])
 
-  def Input(allowEditing: Boolean, value: String, onOk: String => Unit, className: Option[String] = None) = {
-    apply(Props(useTextarea = false, allowEditing, value, onOk, className))
+  def Input(allowEditing: Boolean, value: String, onOk: String => Unit, className: Option[String] = None,
+            normalPlaceholder: Option[ReactDOM] = None, editingPlaceholder: Option[ReactDOM] = None) = {
+    apply(Props(useTextarea = false, allowEditing, value, onOk, className, normalPlaceholder, editingPlaceholder))
   }
 
-  def Textarea(allowEditing: Boolean, value: String, onOk: String => Unit, className: Option[String] = None) = {
-    apply(Props(useTextarea = true, allowEditing, value, onOk, className))
+  def Textarea(allowEditing: Boolean, value: String, onOk: String => Unit, className: Option[String] = None,
+               normalPlaceholder: Option[ReactDOM] = None, editingPlaceholder: Option[ReactDOM] = None) = {
+    apply(Props(useTextarea = true, allowEditing, value, onOk, className, normalPlaceholder, editingPlaceholder))
   }
 
   override def getInitialState(self: This) = State()
@@ -40,16 +42,18 @@ object Editable extends TypedReactSpec with TypedEventListeners {
     import self._
 
     val startEditing = element.onClick(e => {
+      e.preventDefault()
       setState(state.copy(editing = true), () => {
-        setValue(Key, props.value)
-        self.refs(Key).getDOMNode().focus()
+        val node = getEditingNode
+        node.value = props.value
+        node.focus()
       })
     })
 
     val doNothing = element.onClick(e => ())
 
     val update = button.onClick(e => {
-      val value = getValue(Key)
+      val value = getEditingNode.value.trim
       props.onOk(value)
       setState(state.copy(editing = false))
     })
@@ -58,18 +62,16 @@ object Editable extends TypedReactSpec with TypedEventListeners {
       setState(state.copy(editing = false))
     })
 
-    private def getValue(key: String): String = {
-      refs(key).getDOMNode().asInstanceOf[HTMLInputElement].value.trim
-    }
-
-    private def setValue(key: String, newValue: String): Unit = {
-      refs(key).getDOMNode().asInstanceOf[HTMLInputElement].value = newValue
+    // FIXME find a better way
+    private def getEditingNode: HTMLInputElement = {
+      refs("editing").getDOMNode().firstChild.asInstanceOf[HTMLInputElement]
     }
 
   }
 
   @scalax
   override def render(self: This) = {
+    import self._
     val originValue = self.props.value
     val useTextarea = self.props.useTextarea
     val className = ClassName(
@@ -80,13 +82,15 @@ object Editable extends TypedReactSpec with TypedEventListeners {
       {
         self.state.editing match {
           case true =>
-            <span className="editing">
+            <span className="editing" ref="editing">
               {
-                if (useTextarea) {
-                  <textarea defaultValue={originValue} ref={Key} />
-                } else {
-                  <input defaultValue={originValue} ref={Key} />
-                }
+                self.props.editingPlaceholder.getOrElse(
+                  if (useTextarea) {
+                    <textarea defaultValue={originValue}  />
+                  } else {
+                    <input defaultValue={originValue} />
+                  }
+                )
               }
               <button onClick={self.update}>Update</button>
               <button onClick={self.cancel}>Cancel</button>
@@ -94,7 +98,7 @@ object Editable extends TypedReactSpec with TypedEventListeners {
           case false =>
             val op = if (self.props.allowEditing) self.startEditing else self.doNothing
             <span onClick={op} className="normal">
-              {originValue}
+              {props.normalPlaceholder.getOrElse(props.value)}
             </span>
         }
       }
