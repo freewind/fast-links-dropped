@@ -1,13 +1,12 @@
-package in.freewind.fastlinks.chrome_extension
+package in.freewind.fastlinks.common
 
 import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
-import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.fastlinks.chrome_extension.main.OneProject
+import com.xored.scalajs.react.{ReactDOM, TypedReactSpec, scalax}
 import in.freewind.fastlinks.{Link, Project}
 import org.scalajs.dom.HTMLInputElement
 import org.scalajs.dom.extensions.KeyCode
 
-object FastLinks extends TypedReactSpec with TypedEventListeners {
+object Search extends TypedReactSpec with TypedEventListeners {
 
   private val RefSearch = "search"
   private val RefHighlightItem = "search-highlight-item"
@@ -17,7 +16,7 @@ object FastLinks extends TypedReactSpec with TypedEventListeners {
                    searchResults: Seq[Result] = Nil,
                    highlightSearchItem: Option[Result] = None)
 
-  case class Props(projects: Seq[Project])
+  case class Props(projects: Seq[Project], nonSearch: Option[ReactDOM] = None)
 
   override def getInitialState(self: This) = State()
 
@@ -69,7 +68,7 @@ object FastLinks extends TypedReactSpec with TypedEventListeners {
     }
   }
 
-  override def componentDidMount(self: FastLinks.This): Unit = {
+  override def componentDidMount(self: This): Unit = {
     self.refs(RefSearch).getDOMNode().focus()
   }
 
@@ -99,14 +98,7 @@ object FastLinks extends TypedReactSpec with TypedEventListeners {
                 }
               }
             </div>
-          case _ =>
-            <div className="all-links">
-              {
-                self.props.projects.map(p =>
-                  OneProject(OneProject.Props(p))
-                )
-              }
-            </div>
+          case _ => self.props.nonSearch
         }
       }
     </div>

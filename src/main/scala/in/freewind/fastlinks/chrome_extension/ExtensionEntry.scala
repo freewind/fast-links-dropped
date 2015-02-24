@@ -2,8 +2,9 @@ package in.freewind.fastlinks.chrome_extension
 
 import com.xored.scalajs.react.{scalax, TypedReactSpec}
 import com.xored.scalajs.react.util.TypedEventListeners
+import in.freewind.fastlinks.common.Search
 import in.freewind.fastlinks.{Project, DataConverter}
-import in.freewind.fastlinks.chrome_extension.main.Setup
+import in.freewind.fastlinks.chrome_extension.main.{ProjectList, Setup}
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
 object ExtensionEntry extends TypedReactSpec with TypedEventListeners {
@@ -39,7 +40,7 @@ object ExtensionEntry extends TypedReactSpec with TypedEventListeners {
   @scalax
   override def render(self: This) = {
     <div id="main-page">
-      {FastLinks(FastLinks.Props(projects = self.state.projects))}
+      {Search(Search.Props(self.state.projects, Some(ProjectList(ProjectList.Props(self.state.projects)))))}
       {Setup(Setup.Props(self.onDataFetched, self.state.dataUrl))}
     </div>
   }
