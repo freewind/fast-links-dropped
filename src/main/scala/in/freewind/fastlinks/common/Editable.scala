@@ -10,13 +10,13 @@ object Editable extends TypedReactSpec with TypedEventListeners {
 
   case class State(editing: Boolean = false)
 
-  case class Props(useTextarea: Boolean = false, value: String, onOk: String => Unit)
+  case class Props(useTextarea: Boolean = false, allowEditing: Boolean, value: String, onOk: String => Unit)
 
-  def Input(value: String, onOk: String => Unit) = {
-    apply(Props(useTextarea = false, value, onOk))
+  def Input(allowEditing: Boolean, value: String, onOk: String => Unit) = {
+    apply(Props(useTextarea = false, allowEditing, value, onOk))
   }
-  def Textarea(value: String, onOk: String => Unit) = {
-    apply(Props(useTextarea = true, value, onOk))
+  def Textarea(allowEditing: Boolean, value: String, onOk: String => Unit) = {
+    apply(Props(useTextarea = true, allowEditing, value, onOk))
   }
 
   override def getInitialState(self: This) = State()
@@ -27,12 +27,14 @@ object Editable extends TypedReactSpec with TypedEventListeners {
 
     import self._
 
-    val startEditing = input.onClick(e => {
+    val startEditing = element.onClick(e => {
       setState(state.copy(editing = true), () => {
         setValue(Key, props.value)
         self.refs(Key).getDOMNode().focus()
       })
     })
+
+    val doNothing = element.onClick(e => ())
 
     val update = button.onClick(e => {
       val value = getValue(Key)
@@ -74,7 +76,8 @@ object Editable extends TypedReactSpec with TypedEventListeners {
               <button onClick={self.cancel}>Cancel</button>
             </div>
           case false =>
-            <div onClick={self.startEditing}>
+            val op = if (self.props.allowEditing) self.startEditing else self.doNothing
+            <div onClick={op}>
               {originValue}
             </div>
         }

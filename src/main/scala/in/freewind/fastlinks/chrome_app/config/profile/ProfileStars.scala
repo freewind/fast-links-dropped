@@ -10,7 +10,7 @@ object ProfileStars extends TypedReactSpec with TypedEventListeners {
 
   case class State(editing: Boolean = false)
 
-  case class Props(value: Option[Int], updateStars: Int => Unit)
+  case class Props(allowEditing: Boolean, value: Option[Int], updateStars: Int => Unit)
 
   override def getInitialState(self: This) = State()
 
@@ -23,6 +23,8 @@ object ProfileStars extends TypedReactSpec with TypedEventListeners {
         self.refs(RefInput).getDOMNode().focus()
       })
     })
+
+    val doNothing = element.onClick(e => ())
 
     val update = button.onClick(e => {
       val value = refs(RefInput).getDOMNode().asInstanceOf[HTMLInputElement].value.trim
@@ -38,6 +40,7 @@ object ProfileStars extends TypedReactSpec with TypedEventListeners {
   @scalax
   override def render(self: This) = {
     val value = self.props.value
+    val editOp = if (self.props.allowEditing) self.startEditing else self.doNothing
     if (self.state.editing) {
       <div>
         <input type="text" defaultValue={value.map(_.toString).getOrElse("")}  ref={RefInput}/>
@@ -48,13 +51,13 @@ object ProfileStars extends TypedReactSpec with TypedEventListeners {
     } else {
       value match {
         case Some(v) =>
-          <div onClick={self.startEditing}>
+          <div onClick={editOp}>
             {
               (1 to v).map(_ => <span>*</span>)
             }
           </div>
         case _ =>
-          <div onClick={self.startEditing}>no stars. click to set</div>
+          <div onClick={editOp}>no stars. click to set</div>
       }
     }
   }

@@ -9,7 +9,7 @@ import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
 object AppEntry extends TypedReactSpec with TypedEventListeners {
 
-  case class State(meta: Option[Meta] = None, storageData: Option[AppStorageData] = None)
+  case class State(meta: Option[Meta] = None, storageData: Option[AppStorageData] = None, allowEditing: Boolean = false)
 
   case class Props()
 
@@ -37,20 +37,30 @@ object AppEntry extends TypedReactSpec with TypedEventListeners {
     def saveStorageData(storageData: AppStorageData): Unit = {
       AppStorageData.save(storageData).foreach(data => setState(state.copy(storageData = Some(data))))
     }
-    def updateMeta(meta: Meta) = {
+    def updateMeta(meta: Meta): Unit = {
       setState(state.copy(meta = Some(meta)))
+    }
+    def startEditing(): Unit = {
+      setState(state.copy(allowEditing = true))
+    }
+
+    def doneEditing(): Unit = {
+      // FIXME save changed items
+      setState(state.copy(allowEditing = false))
     }
   }
 
   @scalax
   override def render(self: This) = {
     val backend = new Closure(self)
-    ConfigPage(ConfigPage.Props(self.state.meta, backend))
+    ConfigPage(ConfigPage.Props(self.state.meta, self.state.allowEditing, backend))
   }
 }
 
 // create a standalone trait outside the AppEntry, is for avoiding the circle reference compilation error
 trait AppBackend {
   def saveStorageData(storageData: AppStorageData): Unit
-  def updateMeta(meta: Meta)
+  def updateMeta(meta: Meta): Unit
+  def startEditing(): Unit
+  def doneEditing(): Unit
 }

@@ -14,6 +14,7 @@ object Header extends TypedReactSpec with TypedEventListeners {
 
   case class Props(meta: Option[Meta],
                    currentCategory: Option[Category],
+                   allowEditing: Boolean,
                    selectCategory: Category => Unit,
                    appBackend: AppBackend)
 
@@ -37,6 +38,14 @@ object Header extends TypedReactSpec with TypedEventListeners {
       self.props.selectCategory(category)
     })
 
+    val startEditing = button.onClick(e => {
+      props.appBackend.startEditing()
+    })
+
+    val doneEditing = button.onClick(e => {
+      props.appBackend.doneEditing()
+    })
+
   }
 
 
@@ -55,6 +64,13 @@ object Header extends TypedReactSpec with TypedEventListeners {
       <span>
         <button onClick={self.chooseDataDir}>Choose Data Dir</button>
       </span>
+      {
+         if (self.props.allowEditing) {
+          <button onClick={self.doneEditing}>Done</button>
+         } else {
+           <button onClick={self.startEditing}>Edit</button>
+         }
+      }
     </div>
   }
 

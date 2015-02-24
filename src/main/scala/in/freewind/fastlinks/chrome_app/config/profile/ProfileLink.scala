@@ -10,7 +10,7 @@ object ProfileLink extends TypedReactSpec with TypedEventListeners {
 
   case class State()
 
-  case class Props(link: Link, updateLink: Link => Unit)
+  case class Props(allowEditing: Boolean, link: Link, updateLink: Link => Unit)
 
   override def getInitialState(self: This) = State()
 
@@ -37,10 +37,11 @@ object ProfileLink extends TypedReactSpec with TypedEventListeners {
   @scalax
   override def render(self: This) = {
     val link = self.props.link
+    val allowEditing = self.props.allowEditing
     <div className="link">
-      <div>{Editable.Input(link.name.getOrElse(""), self.updateName)}</div>
-      <div>{Editable.Input(link.url, self.updateUrl)}</div>
-      <div>{Editable.Textarea(link.description.getOrElse(""), self.updateDesc)}</div>
+      <div>{Editable.Input(allowEditing, link.name.getOrElse(""), self.updateName)}</div>
+      <div>{Editable.Input(allowEditing, link.url, self.updateUrl)}</div>
+      <div>{Editable.Textarea(allowEditing, link.description.getOrElse(""), self.updateDesc)}</div>
     </div>
   }
 

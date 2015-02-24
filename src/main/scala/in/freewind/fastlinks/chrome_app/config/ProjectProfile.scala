@@ -10,7 +10,7 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
 
   case class State()
 
-  case class Props(project: Project, updateProject: (Project, Project) => Unit)
+  case class Props(allowEditing: Boolean, project: Project, updateProject: (Project, Project) => Unit)
 
   override def getInitialState(self: This) = State()
 
@@ -57,20 +57,21 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
   @scalax
   override def render(self: This) = {
     val project = self.props.project
+    val allowEditing = self.props.allowEditing
     <div>
-      {Editable.Input(project.name, self.updateProjectName)}
-      {ProfileStars(ProfileStars.Props(project.stars, self.updateStars))}
-      {Editable.Textarea(project.description.getOrElse("..."), self.updateDesc)}
+      {Editable.Input(allowEditing, project.name, self.updateProjectName)}
+      {ProfileStars(ProfileStars.Props(allowEditing, project.stars, self.updateStars))}
+      {Editable.Textarea(allowEditing, project.description.getOrElse("..."), self.updateDesc)}
       {
         <div className="project-group">
-          {ProfileLinks(ProfileLinks.Props(project.basicLinks, self.updateBasicLinks))}
+          {ProfileLinks(ProfileLinks.Props(allowEditing, project.basicLinks, self.updateBasicLinks))}
         </div>
       }
       {
-        project.moreLinkGroups.map(g =>
+        project.moreLinkGroups.map(group =>
           <div className="project-group">
-            {Editable.Input(g.name, self.updateGroupName(g))}
-            {ProfileLinks(ProfileLinks.Props(g.links, self.updateLinksOfGroup(g)))}
+            {Editable.Input(allowEditing, group.name, self.updateGroupName(group))}
+            {ProfileLinks(ProfileLinks.Props(allowEditing, group.links, self.updateLinksOfGroup(group)))}
           </div>
         )
       }

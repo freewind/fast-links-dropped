@@ -8,7 +8,7 @@ object ProfileLinks extends TypedReactSpec with TypedEventListeners {
 
   case class State(editing: Boolean = false)
 
-  case class Props(links: Seq[Link], updateLinks: Seq[Link] => Unit)
+  case class Props(allowEditing: Boolean, links: Seq[Link], updateLinks: Seq[Link] => Unit)
 
   override def getInitialState(self: This) = State()
 
@@ -34,7 +34,7 @@ object ProfileLinks extends TypedReactSpec with TypedEventListeners {
     <div className="group-links">
       {
         self.props.links.map(link =>
-          ProfileLink(ProfileLink.Props(link, self.updateLink(link)))
+          ProfileLink(ProfileLink.Props(self.props.allowEditing, link, self.updateLink(link)))
         )
       }
       {
