@@ -1,10 +1,10 @@
 package in.freewind.fastlinks.chrome_app
 
+import com.xored.scalajs.react.{scalax, TypedReactSpec}
 import com.xored.scalajs.react.util.TypedEventListeners
-import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks._
 import in.freewind.fastlinks.chrome_app.main.Header
-import in.freewind.fastlinks.chrome_extension.FastLinks
+import in.freewind.fastlinks.common.Search
 
 object MainPage extends TypedReactSpec with TypedEventListeners {
 
@@ -46,7 +46,7 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
       { Header(Header.Props(self.props.meta, self.state.currentCategory, self.selectCategory, self.props.appBackend)) }
       <div>
         {
-          FastLinks(FastLinks.Props(projects = self.state.currentCategory.map(_.projects).getOrElse(Nil)))
+          Search(Search.Props(projects = self.state.currentCategory.map(_.projects).getOrElse(Nil)))
         }
       </div>
     </div>
