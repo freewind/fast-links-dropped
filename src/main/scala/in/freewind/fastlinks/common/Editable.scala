@@ -6,6 +6,8 @@ import org.scalajs.dom.HTMLInputElement
 
 object Editable extends TypedReactSpec with TypedEventListeners {
 
+  private val Key = "input"
+
   sealed trait InputType
 
   case class State(editing: Boolean = false)
@@ -21,7 +23,12 @@ object Editable extends TypedReactSpec with TypedEventListeners {
 
   override def getInitialState(self: This) = State()
 
-  val Key = "input"
+  override def componentWillReceiveProps(self: This, nextProps: Props): Unit = {
+    import self._
+    if (!nextProps.allowEditing) {
+      setState(state.copy(editing = false))
+    }
+  }
 
   implicit class Closure(self: This) {
 
