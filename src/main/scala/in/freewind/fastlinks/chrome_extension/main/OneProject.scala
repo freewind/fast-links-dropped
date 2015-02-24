@@ -33,7 +33,7 @@ object OneProject extends TypedReactSpec with TypedEventListeners {
     <div className="project">
       <div className="project-name">
         <span>{p.name}</span>
-        { Stars(Stars.Props(p.stars)) }
+        { Stars(Stars.Props(allowEditing = false, count = p.stars)) }
         {
           p.description.map(_ =>
             <span onClick={self.showDescription} className="show-description">[+]</span>

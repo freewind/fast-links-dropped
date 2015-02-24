@@ -39,7 +39,7 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
     }
 
     def updateStars(value: String): Unit = {
-      props.updateProject(project, project.copy(stars = Some(value.toInt)))
+      props.updateProject(project, project.copy(stars = Some(value.toInt).filter(_ > 0)))
     }
 
     def updateLinksOfGroup(linkGroup: LinkGroup)(newLinks: Seq[Link]): Unit = {
@@ -59,16 +59,16 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
     val project = self.props.project
     val allowEditing = self.props.allowEditing
     <div>
-      {Editable.Input(allowEditing, project.name, self.updateProjectName, Some("project-name"))}
+      {Editable.Input(allowEditing, Some(project.name), self.updateProjectName, Some("project-name"))}
       <div className="project-stars">
         {
-          Editable.Input(allowEditing, project.stars.map(_.toString).getOrElse(""), self.updateStars,
-            normalPlaceholder = Some(Stars(Stars.Props(project.stars))),
+          Editable.Input(allowEditing, None, self.updateStars,
+            normalPlaceholder = Some(Stars(Stars.Props(allowEditing, project.stars))),
             editingPlaceholder = Some(EditingStars(EditingStars.Props(project.stars)))
           )
         }
       </div>
-      {Editable.Textarea(allowEditing, project.description.getOrElse("..."), self.updateDesc, Some("project-description"))}
+      {Editable.Textarea(allowEditing, project.description, self.updateDesc, Some("project-description"))}
       {
         <div className="project-group">
           {ProfileLinks(ProfileLinks.Props(allowEditing, project.basicLinks, self.updateBasicLinks))}
@@ -77,7 +77,7 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
       {
         project.moreLinkGroups.map(group =>
           <div className="project-group">
-            {Editable.Input(allowEditing, group.name, self.updateGroupName(group), Some("group-name"))}
+            {Editable.Input(allowEditing, Some(group.name), self.updateGroupName(group), Some("group-name"))}
             {ProfileLinks(ProfileLinks.Props(allowEditing, group.links, self.updateLinksOfGroup(group)))}
           </div>
         )

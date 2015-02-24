@@ -12,18 +12,18 @@ object Editable extends TypedReactSpec with TypedEventListeners {
 
   case class Props(useTextarea: Boolean,
                    allowEditing: Boolean,
-                   value: String,
+                   value: Option[String],
                    onOk: String => Unit,
                    className: Option[String],
                    normalPlaceholder: Option[ReactDOM],
                    editingPlaceholder: Option[ReactDOM])
 
-  def Input(allowEditing: Boolean, value: String, onOk: String => Unit, className: Option[String] = None,
+  def Input(allowEditing: Boolean, value: Option[String], onOk: String => Unit, className: Option[String] = None,
             normalPlaceholder: Option[ReactDOM] = None, editingPlaceholder: Option[ReactDOM] = None) = {
     apply(Props(useTextarea = false, allowEditing, value, onOk, className, normalPlaceholder, editingPlaceholder))
   }
 
-  def Textarea(allowEditing: Boolean, value: String, onOk: String => Unit, className: Option[String] = None,
+  def Textarea(allowEditing: Boolean, value: Option[String], onOk: String => Unit, className: Option[String] = None,
                normalPlaceholder: Option[ReactDOM] = None, editingPlaceholder: Option[ReactDOM] = None) = {
     apply(Props(useTextarea = true, allowEditing, value, onOk, className, normalPlaceholder, editingPlaceholder))
   }
@@ -45,7 +45,7 @@ object Editable extends TypedReactSpec with TypedEventListeners {
       e.preventDefault()
       setState(state.copy(editing = true), () => {
         val node = getEditingNode
-        node.value = props.value
+        props.value.foreach(v => node.value = v)
         node.focus()
       })
     })
@@ -86,9 +86,9 @@ object Editable extends TypedReactSpec with TypedEventListeners {
               {
                 self.props.editingPlaceholder.getOrElse(
                   if (useTextarea) {
-                    <textarea defaultValue={originValue}  />
+                    <textarea defaultValue={originValue.getOrElse("")} />
                   } else {
-                    <input defaultValue={originValue} />
+                    <input defaultValue={originValue.getOrElse("")} />
                   }
                 )
               }
@@ -96,9 +96,9 @@ object Editable extends TypedReactSpec with TypedEventListeners {
               <button onClick={self.cancel}>Cancel</button>
             </span>
           case false =>
-            val op = if (self.props.allowEditing) self.startEditing else self.doNothing
+            val (op, defaultValue) = if (self.props.allowEditing) (self.startEditing, "no content, click to edit") else (self.doNothing, "")
             <span onClick={op} className="normal">
-              {props.normalPlaceholder.getOrElse(props.value)}
+              {props.normalPlaceholder.getOrElse(props.value.getOrElse(defaultValue))}
             </span>
         }
       }

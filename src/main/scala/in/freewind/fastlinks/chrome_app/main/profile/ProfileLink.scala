@@ -44,11 +44,11 @@ object ProfileLink extends TypedReactSpec with TypedEventListeners {
     <div className="link">
       <div>
         {
-          link.name.map(name => <span className="link-name">{Editable.Input(allowEditing, name, self.updateName)}</span>)
+          link.name.map(name => <span className="link-name">{Editable.Input(allowEditing, Some(name), self.updateName)}</span>)
         }
         <span className="link-url">
           {
-            Editable.Input(allowEditing, link.url, self.updateUrl, normalPlaceholder = Some(A(A.Props(link.url, link.url))))
+            Editable.Input(allowEditing, Some(link.url), self.updateUrl, normalPlaceholder = Some(A(A.Props(link.url, link.url))))
           }
         </span>
         {
@@ -57,7 +57,7 @@ object ProfileLink extends TypedReactSpec with TypedEventListeners {
       </div>
       {
         if (self.state.showDescription) {
-          <div className="link-description">{Editable.Textarea(allowEditing, link.description.getOrElse(""), self.updateDesc)}</div>
+          <div className="link-description">{Editable.Textarea(allowEditing, link.description, self.updateDesc)}</div>
         } else None
       }
     </div>

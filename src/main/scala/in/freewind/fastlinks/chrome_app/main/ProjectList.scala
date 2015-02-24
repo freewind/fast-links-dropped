@@ -35,6 +35,7 @@ object ProjectList extends TypedReactSpec with TypedEventListeners {
   @scalax
   override def render(self: This) = {
     val projects = self.props.currentCategory.toList.flatMap(_.projects)
+    val allowEditing = self.props.allowEditing
     <div>
       {
         projects.map { p =>
@@ -46,12 +47,12 @@ object ProjectList extends TypedReactSpec with TypedEventListeners {
             <span className="project-name">
               {p.name}
             </span>
-            { Stars(Stars.Props(p.stars)) }
+            { Stars(Stars.Props(allowEditing = false, count = p.stars)) }
           </div>
         }
       }
       {
-        if (self.props.allowEditing) {
+        if (allowEditing) {
           <div>
             <input type="text" onKeyUp={self.newProject} placeholder="new project"/>
           </div>
