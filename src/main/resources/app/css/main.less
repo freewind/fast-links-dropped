@@ -1,5 +1,7 @@
-@windowWidth: 400px;
-@windowHeight: 400px;
+@windowWidth: 960px;
+@windowHeight: 640px;
+@sidebarWidth: 200px;
+@bodyPadding: 5px;
 
 html, body {
   width: @windowWidth;
@@ -9,8 +11,10 @@ html, body {
 }
 
 body {
-  padding: 5px;
+  padding: @bodyPadding;
   position: relative;
+  font-size: 14px;
+  line-height: 150%;
 }
 
 .current-category {
@@ -18,6 +22,7 @@ body {
 }
 
 #main-page {
+
   .search-panel {
     position: relative;
     .search {
@@ -34,48 +39,7 @@ body {
       }
     }
   }
-  .all-links {
-    overflow: auto;
-    max-height: @windowHeight - 30;
-    .show-description {
-      color: #999999;
-      cursor: pointer;
-      font-size: 8px;
-      margin-left: 3px;
-      &:hover {
-        background-color: #EEEEEE;
-      }
-    }
-    .project-description, .link-description {
-      color: #555555;
-      padding: 2px;
-      background-color: #F6F6F6;
-      margin: 2px 0 8px;
-    }
-    .link-name {
-      margin-right: 5px;
-      color: #3360ba;
-    }
-    .link-url {
 
-    }
-    .project-name {
-      padding: 2px 0;
-      margin: 3px 0;
-      font-weight: bold;
-      border-bottom: 1px solid #eeeeee;
-    }
-    .stars {
-      font-size: 8px;
-      color: #cd801e;
-      padding-left: 5px;
-    }
-    .group-links {
-      .group-name {
-        padding: 2px 0;
-      }
-    }
-  }
   .search-results {
     padding: 5px 0;
     .highlight-search-item {
@@ -89,34 +53,78 @@ body {
       padding: 3px 0;
     }
   }
-}
 
-#config-page {
-  .project-list {
+  .sidebar {
+    width: @sidebarWidth;
     position: absolute;
-    width: 150px;
+    .project-list {
+      .project {
+        line-height: 30px;
+        .project-name {
+          padding-right: 5px;
+        }
+      }
+      .current-project {
+        background-color: #EEEEEE;
+      }
+    }
   }
-  .current-project {
-    background-color: green;
-  }
+
   .project-profile {
     position: absolute;
-    left: 150px;
+    left: @sidebarWidth + @bodyPadding + 10px;
+    width: 100%;
     .project-name {
-      padding: 10px;
-      border: 1px solid #EEE;
+      line-height: 40px;
+      font-size: 30px;
+      font-weight: bold;
+      color: #333333;
     }
-    .project-desc {
-      padding: 10px;
-      border: 1px solid #EEE;
+    .project-stars {
+      line-height: 30px;
+    }
+    .project-description {
     }
     .project-group {
-      padding: 10px;
-      border: 1px solid #EEE;
+      margin-top: 20px;
+      .group-name {
+        color: #333333;
+        line-height: 45px;
+        font-size: 20px;
+        font-weight: bold;
+      }
     }
     .link {
-      padding: 10px;
+      display: list-item;
+      margin-left: 30px;
+      .link-name {
+        color: #666666;
+        margin-right: 10px;
+      }
+      .link-url {
+        color: #3360ba;
+      }
+      .link-description {
+        color: #666666;
+        background-color: #F6F6F6;
+        padding: 5px;
+        margin-bottom: 5px;
+        font-size: 12px;
+      }
+      .link-show-description {
+        color: #999999;
+        cursor: pointer;
+        font-size: 10px;
+        margin-left: 10px;
+        text-align: center;
+        &:hover {
+          background-color: #EEEEEE;
+        }
+      }
     }
   }
-
+  .stars {
+    font-size: 8px;
+    color: #cd801e;
+  }
 }

@@ -67,17 +67,19 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
     import self._
     val appBackend = self.props.appBackend
     val (currentCategory, currentProject) = (self.state.currentCategory, self.state.currentProject)
-    <div id="config-page">
+    <div id="main-page">
       { Header(Header.Props(props.meta, self.state.currentCategory, props.allowEditing, self.selectCategory, appBackend)) }
-      <div className="project-list">
-        { Search(Search.Props(state.currentCategory.map(_.projects).getOrElse(Nil))) }
-        { ProjectList(ProjectList.Props(currentCategory, currentProject, self.props.allowEditing, self.onSelectProject, self.onNewProject)) }
+      { Search(Search.Props(state.currentCategory.map(_.projects).getOrElse(Nil))) }
+      <div className="sidebar">
+        <div className="project-list">
+          { ProjectList(ProjectList.Props(currentCategory, currentProject, self.props.allowEditing, self.onSelectProject, self.onNewProject)) }
+        </div>
       </div>
       <div className="project-profile">
         {
           self.state.currentProject match {
             case Some(project) => ProjectProfile(ProjectProfile.Props(props.allowEditing, project, self.updateProject))
-            case _ => <div></div>
+            case _ => None
           }
         }
       </div>

@@ -2,6 +2,7 @@ package in.freewind.fastlinks.chrome_extension.main
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
+import in.freewind.fastlinks.common.Stars
 import in.freewind.fastlinks.{Link, Project}
 
 object OneProject extends TypedReactSpec with TypedEventListeners {
@@ -29,15 +30,10 @@ object OneProject extends TypedReactSpec with TypedEventListeners {
       <div className="links">{ links.map(link => OneLink(OneLink.Props(link))) }</div>
     }
 
-    def showStars(stars: Option[Int]) = stars match {
-      case Some(n) => (1 to n).toList.map(_ => "★")
-      case _ => ""
-    }
-
     <div className="project">
       <div className="project-name">
         <span>{p.name}</span>
-        <span className="stars">{showStars(p.stars)}</span>
+        { Stars(Stars.Props(p.stars)) }
         {
           p.description.map(_ =>
             <span onClick={self.showDescription} className="show-description">[+]</span>

@@ -2,6 +2,7 @@ package in.freewind.fastlinks.chrome_app.main
 
 import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
+import in.freewind.fastlinks.common.Stars
 import in.freewind.fastlinks.{Category, Project}
 import org.scalajs.dom.extensions.KeyCode
 
@@ -30,10 +31,6 @@ object ProjectList extends TypedReactSpec with TypedEventListeners {
     })
   }
 
-  private def showStars(stars: Option[Int]) = stars match {
-    case Some(n) => (1 to n).toList.map(_ => "★")
-    case _ => ""
-  }
 
   @scalax
   override def render(self: This) = {
@@ -41,12 +38,15 @@ object ProjectList extends TypedReactSpec with TypedEventListeners {
     <div>
       {
         projects.map { p =>
-          val className = ClassName("current-project" -> (Some(p) == self.props.currentProject))
-          <div>
-            <button onClick={self.selectProject(p)} className={className}>
+          val className = ClassName(
+            "project" -> true,
+            "current-project" -> (Some(p) == self.props.currentProject)
+          )
+          <div className={className} onClick={self.selectProject(p)}>
+            <span className="project-name">
               {p.name}
-            </button>
-            <span className="stars">{showStars(p.stars)}</span>
+            </span>
+            { Stars(Stars.Props(p.stars)) }
           </div>
         }
       }

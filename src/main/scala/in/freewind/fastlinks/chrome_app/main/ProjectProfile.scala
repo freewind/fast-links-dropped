@@ -59,9 +59,9 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
     val project = self.props.project
     val allowEditing = self.props.allowEditing
     <div>
-      {Editable.Input(allowEditing, project.name, self.updateProjectName)}
+      {Editable.Input(allowEditing, project.name, self.updateProjectName, Some("project-name"))}
       {ProfileStars(ProfileStars.Props(allowEditing, project.stars, self.updateStars))}
-      {Editable.Textarea(allowEditing, project.description.getOrElse("..."), self.updateDesc)}
+      {Editable.Textarea(allowEditing, project.description.getOrElse("..."), self.updateDesc, Some("project-description"))}
       {
         <div className="project-group">
           {ProfileLinks(ProfileLinks.Props(allowEditing, project.basicLinks, self.updateBasicLinks))}
@@ -70,7 +70,7 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
       {
         project.moreLinkGroups.map(group =>
           <div className="project-group">
-            {Editable.Input(allowEditing, group.name, self.updateGroupName(group))}
+            {Editable.Input(allowEditing, group.name, self.updateGroupName(group), Some("group-name"))}
             {ProfileLinks(ProfileLinks.Props(allowEditing, group.links, self.updateLinksOfGroup(group)))}
           </div>
         )
