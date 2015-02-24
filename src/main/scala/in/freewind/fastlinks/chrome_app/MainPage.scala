@@ -15,6 +15,15 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
 
   override def getInitialState(self: This) = State()
 
+  override def componentWillReceiveProps(self: MainPage.This, nextProps: MainPage.This#Props): Unit = {
+    import self._
+    if (state.currentCategory.isEmpty) {
+      val firstCategory = nextProps.meta.flatMap(_.categories.headOption)
+      val currentProject = firstCategory.flatMap(_.projects.headOption)
+      setState(state.copy(currentCategory = firstCategory, currentProject = currentProject))
+    }
+  }
+
   implicit class Closure(self: This) {
 
     import self._
