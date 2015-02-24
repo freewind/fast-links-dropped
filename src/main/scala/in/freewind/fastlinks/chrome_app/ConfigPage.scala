@@ -3,6 +3,7 @@ package in.freewind.fastlinks.chrome_app
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks.chrome_app.config.{Header, ProjectList, ProjectProfile}
+import in.freewind.fastlinks.common.Search
 import in.freewind.fastlinks.{Category, Meta, Project}
 
 object ConfigPage extends TypedReactSpec with TypedEventListeners {
@@ -54,12 +55,14 @@ object ConfigPage extends TypedReactSpec with TypedEventListeners {
 
   @scalax
   override def render(self: This) = {
+    import self._
     val appBackend = self.props.appBackend
     val (currentCategory, currentProject) = (self.state.currentCategory, self.state.currentProject)
     <div id="config-page">
-      { Header(Header.Props(self.props.meta, self.state.currentCategory, self.selectCategory, appBackend)) }
+      { Header(Header.Props(props.meta, self.state.currentCategory, self.selectCategory, appBackend)) }
       <div className="project-list">
-        {ProjectList(ProjectList.Props(currentCategory, currentProject, self.onSelectProject, self.onNewProject))}
+        { Search(Search.Props(state.currentCategory.map(_.projects).getOrElse(Nil))) }
+        { ProjectList(ProjectList.Props(currentCategory, currentProject, self.onSelectProject, self.onNewProject)) }
       </div>
       <div className="project-profile">
         {

@@ -37,9 +37,6 @@ object Header extends TypedReactSpec with TypedEventListeners {
       self.props.selectCategory(category)
     })
 
-    val goToMainPage = element.onClick(e => {
-      props.appBackend.goToMainPage()
-    })
   }
 
 
@@ -58,7 +55,6 @@ object Header extends TypedReactSpec with TypedEventListeners {
       <span>
         <button onClick={self.chooseDataDir}>Choose Data Dir</button>
       </span>
-      <button onClick={self.goToMainPage}>Go to main page</button>
     </div>
   }
 

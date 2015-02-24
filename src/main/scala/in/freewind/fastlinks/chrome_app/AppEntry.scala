@@ -9,13 +9,7 @@ import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
 object AppEntry extends TypedReactSpec with TypedEventListeners {
 
-  sealed trait Page
-
-  case object SelectedMainPage extends Page
-
-  case object SelectedConfigPage extends Page
-
-  case class State(currentPage: Page, meta: Option[Meta] = None, storageData: Option[AppStorageData] = None)
+  case class State(meta: Option[Meta] = None, storageData: Option[AppStorageData] = None)
 
   case class Props()
 
@@ -33,16 +27,13 @@ object AppEntry extends TypedReactSpec with TypedEventListeners {
         }
       case _ =>
     }
-    State(SelectedMainPage)
+    State()
   }
 
   implicit class Closure(self: This) extends AppBackend {
 
     import self._
 
-    private def selectPage(page: Page) = setState(state.copy(currentPage = page))
-    def goToConfigPage(): Unit = selectPage(SelectedConfigPage)
-    def goToMainPage(): Unit = selectPage(SelectedMainPage)
     def saveStorageData(storageData: AppStorageData): Unit = {
       AppStorageData.save(storageData).foreach(data => setState(state.copy(storageData = Some(data))))
     }
@@ -54,17 +45,12 @@ object AppEntry extends TypedReactSpec with TypedEventListeners {
   @scalax
   override def render(self: This) = {
     val backend = new Closure(self)
-    self.state.currentPage match {
-      case SelectedMainPage => MainPage(MainPage.Props(self.state.meta, backend))
-      case SelectedConfigPage => ConfigPage(ConfigPage.Props(self.state.meta, backend))
-    }
+    ConfigPage(ConfigPage.Props(self.state.meta, backend))
   }
 }
 
 // create a standalone trait outside the AppEntry, is for avoiding the circle reference compilation error
 trait AppBackend {
-  def goToConfigPage(): Unit
-  def goToMainPage(): Unit
   def saveStorageData(storageData: AppStorageData): Unit
   def updateMeta(meta: Meta)
 }
