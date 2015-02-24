@@ -71,7 +71,7 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
       { Header(Header.Props(props.meta, self.state.currentCategory, props.allowEditing, self.selectCategory, appBackend)) }
       <div className="project-list">
         { Search(Search.Props(state.currentCategory.map(_.projects).getOrElse(Nil))) }
-        { ProjectList(ProjectList.Props(currentCategory, currentProject, self.onSelectProject, self.onNewProject)) }
+        { ProjectList(ProjectList.Props(currentCategory, currentProject, self.props.allowEditing, self.onSelectProject, self.onNewProject)) }
       </div>
       <div className="project-profile">
         {

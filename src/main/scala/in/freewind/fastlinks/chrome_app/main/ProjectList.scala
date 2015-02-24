@@ -11,6 +11,7 @@ object ProjectList extends TypedReactSpec with TypedEventListeners {
 
   case class Props(currentCategory: Option[Category],
                    currentProject: Option[Project],
+                   allowEditing: Boolean,
                    onSelectProject: Project => Unit,
                    onNewProject: String => Unit)
 
@@ -43,9 +44,13 @@ object ProjectList extends TypedReactSpec with TypedEventListeners {
           </div>
         }
       }
-      <div>
-        <input type="text" onKeyUp={self.newProject} placeholder="new project"/>
-      </div>
+      {
+        if (self.props.allowEditing) {
+          <div>
+            <input type="text" onKeyUp={self.newProject} placeholder="new project"/>
+          </div>
+        } else None
+      }
     </div>
   }
 

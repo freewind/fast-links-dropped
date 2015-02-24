@@ -38,7 +38,9 @@ object ProfileLinks extends TypedReactSpec with TypedEventListeners {
         )
       }
       {
-        NewLink(NewLink.Props(self.newLink))
+        if (self.props.allowEditing) {
+          NewLink(NewLink.Props(self.newLink))
+        } else None
       }
     </div>
   }
