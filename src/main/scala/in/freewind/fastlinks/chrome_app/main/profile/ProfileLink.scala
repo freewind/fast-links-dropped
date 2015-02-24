@@ -1,4 +1,4 @@
-package in.freewind.fastlinks.chrome_app.config.profile
+package in.freewind.fastlinks.chrome_app.main.profile
 
 import in.freewind.fastlinks.RichString
 import com.xored.scalajs.react.util.TypedEventListeners

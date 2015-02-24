@@ -53,7 +53,7 @@ object AppEntry extends TypedReactSpec with TypedEventListeners {
   @scalax
   override def render(self: This) = {
     val backend = new Closure(self)
-    ConfigPage(ConfigPage.Props(self.state.meta, self.state.allowEditing, backend))
+    MainPage(MainPage.Props(self.state.meta, self.state.allowEditing, backend))
   }
 }
 

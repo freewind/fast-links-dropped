@@ -2,11 +2,11 @@ package in.freewind.fastlinks.chrome_app
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.fastlinks.chrome_app.config.{Header, ProjectList, ProjectProfile}
+import in.freewind.fastlinks.chrome_app.main.{Header, ProjectList, ProjectProfile}
 import in.freewind.fastlinks.common.Search
 import in.freewind.fastlinks.{Category, Meta, Project}
 
-object ConfigPage extends TypedReactSpec with TypedEventListeners {
+object MainPage extends TypedReactSpec with TypedEventListeners {
 
   case class State(currentCategory: Option[Category] = None,
                    currentProject: Option[Project] = None)
