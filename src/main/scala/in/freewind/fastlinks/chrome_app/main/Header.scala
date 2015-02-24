@@ -61,12 +61,12 @@ object Header extends TypedReactSpec with TypedEventListeners {
           case _ => <span>no meta</span>
         }
       }
-      <span>
-        <button onClick={self.chooseDataDir}>Choose Data Dir</button>
-      </span>
       {
          if (self.props.allowEditing) {
-          <button onClick={self.doneEditing}>Done</button>
+           <span>
+             <button onClick={self.chooseDataDir}>Choose Data Dir</button>
+           </span>
+           <button onClick={self.doneEditing}>Done</button>
          } else {
            <button onClick={self.startEditing}>Edit</button>
          }
