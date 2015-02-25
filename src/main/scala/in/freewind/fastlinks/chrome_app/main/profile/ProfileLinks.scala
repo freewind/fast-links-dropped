@@ -16,7 +16,7 @@ object ProfileLinks extends TypedReactSpec with TypedEventListeners {
 
     import self._
 
-    val startEditing = element.onClick(e => {
+    val startAdding = element.onClick(e => {
       setState(state.copy(editing = true))
     })
 
@@ -27,6 +27,11 @@ object ProfileLinks extends TypedReactSpec with TypedEventListeners {
     def updateLink(oldLink: Link)(newLink: Link): Unit = {
       props.updateLinks(props.links.replace(oldLink, newLink))
     }
+
+    def cancel(): Unit = {
+      setState(state.copy(editing = false))
+    }
+
   }
 
   @scalax
@@ -39,7 +44,13 @@ object ProfileLinks extends TypedReactSpec with TypedEventListeners {
       }
       {
         if (self.props.allowEditing) {
-          NewLink(NewLink.Props(self.newLink))
+          if (self.state.editing) {
+            LinkForm.New(self.newLink, self.cancel)
+          } else {
+            <div>
+              <button onClick={self.startAdding}>+</button>
+            </div>
+          }
         } else None
       }
     </div>

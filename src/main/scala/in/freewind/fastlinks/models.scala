@@ -12,4 +12,4 @@ case class Project(name: String,
 
 case class LinkGroup(name: String, links: Seq[Link] = Nil)
 
-case class Link(name: Option[String] = None, url: String, description: Option[String] = None)
+case class Link(name: Option[String] = None, url: String, description: Option[String] = None, showUrl: Boolean = true)

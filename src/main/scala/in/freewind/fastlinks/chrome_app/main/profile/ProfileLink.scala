@@ -7,7 +7,7 @@ import in.freewind.fastlinks.common.{A, Editable}
 
 object ProfileLink extends TypedReactSpec with TypedEventListeners {
 
-  case class State(showDescription: Boolean = false)
+  case class State(editing: Boolean = false, showDescription: Boolean = false)
 
   case class Props(allowEditing: Boolean, link: Link, updateLink: Link => Unit)
 
@@ -17,47 +17,59 @@ object ProfileLink extends TypedReactSpec with TypedEventListeners {
 
     import self._
 
-    val link = props.link
-
-    def updateName(newName: String): Unit = {
-      props.updateLink(link.copy(name = newName.empty2option))
-    }
-
-    def updateUrl(newUrl: String): Unit = {
-      props.updateLink(link.copy(url = newUrl))
-    }
-
-    def updateDesc(newDesc: String): Unit = {
-      props.updateLink(link.copy(description = Option(newDesc).filterNot(_.isEmpty)))
-    }
-
     val toggleDescription = element.onClick(e => {
       setState(state.copy(showDescription = !state.showDescription))
     })
+
+    val startEditing = element.onClick(e => {
+      e.preventDefault()
+      setState(state.copy(editing = true))
+    })
+
+    val doNothing = element.onClick(e => ())
+
+    def updateLink(link: Link) = {
+      setState(state.copy(editing = false))
+      props.updateLink(link)
+    }
+
+    def cancel(): Unit = {
+      setState(state.copy(editing = false))
+    }
 
   }
 
   @scalax
   override def render(self: This) = {
+    import self._
     val link = self.props.link
     val allowEditing = self.props.allowEditing
+    val clickOp = if (allowEditing) self.startEditing else self.doNothing
     <div className="link">
-      <div>
-        {
-          link.name.map(name => <span className="link-name">{Editable.Input(allowEditing, Some(name), self.updateName)}</span>)
+      {
+        if (state.editing) {
+          LinkForm.Edit(link, self.updateLink, self.cancel)
+        } else {
+          <div onClick={clickOp}>
+            {
+              if (link.showUrl) {
+                <span>
+                  { link.name.map(name => <span className="link-name">{name}</span>) }
+                  <span><a href={link.url} target="_blank">{link.url}</a></span>
+                </span>
+              } else {
+                <a href={link.url} target="_blank">{link.name}</a>
+              }
+            }
+            {
+              link.description.map(_ => <span onClick={self.toggleDescription} className="link-show-description">[+]</span>)
+            }
+          </div>
         }
-        <span className="link-url">
-          {
-            Editable.Input(allowEditing, Some(link.url), self.updateUrl, normalPlaceholder = Some(A(A.Props(link.url, link.url))))
-          }
-        </span>
-        {
-          link.description.map(_ => <span onClick={self.toggleDescription} className="link-show-description">[+]</span>)
-        }
-      </div>
+      }
       {
         if (self.state.showDescription) {
-          <div className="link-description">{Editable.Textarea(allowEditing, link.description, self.updateDesc)}</div>
+          <div className="link-description">{link.description}</div>
         } else None
       }
     </div>
