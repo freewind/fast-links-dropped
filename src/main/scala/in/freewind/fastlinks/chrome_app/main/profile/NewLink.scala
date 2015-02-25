@@ -53,7 +53,7 @@ object NewLink extends TypedReactSpec with TypedEventListeners {
       </div>
     } else {
       <div>
-      <button onClick={self.startAdding}>+</button>
+        <button onClick={self.startAdding}>+</button>
       </div>
     }
   }

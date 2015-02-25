@@ -16,19 +16,20 @@ object Editable extends TypedReactSpec with TypedEventListeners {
                    onOk: String => Unit,
                    className: Option[String],
                    normalPlaceholder: Option[ReactDOM],
-                   editingPlaceholder: Option[ReactDOM])
+                   editingPlaceholder: Option[ReactDOM],
+                   editing: Boolean)
 
   def Input(allowEditing: Boolean, value: Option[String], onOk: String => Unit, className: Option[String] = None,
-            normalPlaceholder: Option[ReactDOM] = None, editingPlaceholder: Option[ReactDOM] = None) = {
-    apply(Props(useTextarea = false, allowEditing, value, onOk, className, normalPlaceholder, editingPlaceholder))
+            normalPlaceholder: Option[ReactDOM] = None, editingPlaceholder: Option[ReactDOM] = None, editing: Boolean = false) = {
+    apply(Props(useTextarea = false, allowEditing, value, onOk, className, normalPlaceholder, editingPlaceholder, editing))
   }
 
   def Textarea(allowEditing: Boolean, value: Option[String], onOk: String => Unit, className: Option[String] = None,
-               normalPlaceholder: Option[ReactDOM] = None, editingPlaceholder: Option[ReactDOM] = None) = {
-    apply(Props(useTextarea = true, allowEditing, value, onOk, className, normalPlaceholder, editingPlaceholder))
+               normalPlaceholder: Option[ReactDOM] = None, editingPlaceholder: Option[ReactDOM] = None, editing: Boolean = false) = {
+    apply(Props(useTextarea = true, allowEditing, value, onOk, className, normalPlaceholder, editingPlaceholder, editing))
   }
 
-  override def getInitialState(self: This) = State()
+  override def getInitialState(self: This) = State(editing = self.props.editing)
 
   override def componentWillReceiveProps(self: This, nextProps: Props): Unit = {
     import self._

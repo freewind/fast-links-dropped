@@ -4,7 +4,7 @@ import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks.common.{Stars, Editable}
 import in.freewind.fastlinks.{LinkGroup, Link, Project}
-import in.freewind.fastlinks.chrome_app.main.profile.{EditingStars, ProfileLinks}
+import in.freewind.fastlinks.chrome_app.main.profile.{NewLinkGroup, EditingStars, ProfileLinks}
 
 object ProjectProfile extends TypedReactSpec with TypedEventListeners {
 
@@ -52,6 +52,11 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
       props.updateProject(project, project.copy(moreLinkGroups = project.moreLinkGroups.replace(group, newGroup)))
     }
 
+    def newGroupName(name: String): Unit = {
+      val newGroup = new LinkGroup(name, Nil)
+      props.updateProject(project, project.copy(moreLinkGroups = project.moreLinkGroups :+ newGroup))
+    }
+
   }
 
   @scalax
@@ -81,6 +86,13 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
             {ProfileLinks(ProfileLinks.Props(allowEditing, group.links, self.updateLinksOfGroup(group)))}
           </div>
         )
+      }
+      {
+        if (allowEditing) {
+          NewLinkGroup(NewLinkGroup.Props(self.newGroupName))
+        } else {
+          None
+        }
       }
     </div>
   }
