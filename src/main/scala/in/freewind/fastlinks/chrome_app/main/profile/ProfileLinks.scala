@@ -22,10 +22,15 @@ object ProfileLinks extends TypedReactSpec with TypedEventListeners {
 
     def newLink(link: Link): Unit = {
       props.updateLinks(props.links :+ link)
+      cancel()
     }
 
     def updateLink(oldLink: Link)(newLink: Link): Unit = {
       props.updateLinks(props.links.replace(oldLink, newLink))
+    }
+
+    def deleteLink(link: Link)= () => {
+      props.updateLinks(props.links.filterNot(_ == link))
     }
 
     def cancel(): Unit = {
@@ -39,7 +44,7 @@ object ProfileLinks extends TypedReactSpec with TypedEventListeners {
     <div className="group-links">
       {
         self.props.links.map(link =>
-          ProfileLink(ProfileLink.Props(self.props.allowEditing, link, self.updateLink(link)))
+          ProfileLink(ProfileLink.Props(self.props.allowEditing, link, self.updateLink(link), self.deleteLink(link)))
         )
       }
       {

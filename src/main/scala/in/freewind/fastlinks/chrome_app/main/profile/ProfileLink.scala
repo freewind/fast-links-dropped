@@ -2,14 +2,13 @@ package in.freewind.fastlinks.chrome_app.main.profile
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.fastlinks.{Link, RichString}
-import in.freewind.fastlinks.common.{A, Editable}
+import in.freewind.fastlinks.Link
 
 object ProfileLink extends TypedReactSpec with TypedEventListeners {
 
-  case class State(editing: Boolean = false, showDescription: Boolean = false)
+  case class State(editing: Boolean = false, deleting: Boolean = false, showDescription: Boolean = false)
 
-  case class Props(allowEditing: Boolean, link: Link, updateLink: Link => Unit)
+  case class Props(allowEditing: Boolean, link: Link, updateLink: Link => Unit, deleteLink: () => Unit)
 
   override def getInitialState(self: This) = State()
 
@@ -37,6 +36,18 @@ object ProfileLink extends TypedReactSpec with TypedEventListeners {
       setState(state.copy(editing = false))
     }
 
+    val deleteLink = button.onClick(e => {
+      setState(state.copy(deleting = false))
+      props.deleteLink()
+    })
+
+    val askForDeleting = button.onClick(e => {
+      setState(state.copy(deleting = true))
+    })
+
+    val cancelDelete = button.onClick(e => {
+      setState(state.copy(deleting = false))
+    })
   }
 
   @scalax
@@ -50,20 +61,40 @@ object ProfileLink extends TypedReactSpec with TypedEventListeners {
         if (state.editing) {
           LinkForm.Edit(link, self.updateLink, self.cancel)
         } else {
-          <div onClick={clickOp}>
-            {
-              if (link.showUrl) {
-                <span>
-                  { link.name.map(name => <span className="link-name">{name}</span>) }
-                  <span><a href={link.url} target="_blank">{link.url}</a></span>
-                </span>
-              } else {
-                <a href={link.url} target="_blank">{link.name}</a>
+          <div>
+            <span onClick={clickOp}>
+              {
+                if (link.showUrl) {
+                  <span>
+                    { link.name.map(name => <span className="link-name">{name}</span>) }
+                    <span><a href={link.url} target="_blank">{link.url}</a></span>
+                  </span>
+                } else {
+                  <a href={link.url} target="_blank">{link.name}</a>
+                }
               }
-            }
+              {
+                link.description.map(_ => <span onClick={self.toggleDescription} className="link-show-description">[+]</span>)
+              }
+            </span>
             {
-              link.description.map(_ => <span onClick={self.toggleDescription} className="link-show-description">[+]</span>)
+              if (allowEditing) {
+                <span>
+                  {
+                    if(state.deleting) {
+                      <span>
+                        <div>Are you sure delete this link?</div>
+                        <button onClick={self.deleteLink}>Ok</button>
+                        <button onClick={self.cancelDelete}>Cancel</button>
+                      </span>
+                    } else {
+                      <button onClick={self.askForDeleting}>delete link</button>
+                    }
+                  }
+                </span>
+              } else None
             }
+
           </div>
         }
       }
