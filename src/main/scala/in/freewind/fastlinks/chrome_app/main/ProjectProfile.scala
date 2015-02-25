@@ -4,7 +4,7 @@ import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks.common.{Stars, Editable}
 import in.freewind.fastlinks.{LinkGroup, Link, Project}
-import in.freewind.fastlinks.chrome_app.main.profile.{NewLinkGroup, EditingStars, ProfileLinks}
+import in.freewind.fastlinks.chrome_app.main.profile.{ProfileLinkGroup, NewLinkGroup, EditingStars, ProfileLinks}
 
 object ProjectProfile extends TypedReactSpec with TypedEventListeners {
 
@@ -29,11 +29,6 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
       props.updateProject(project, newProject)
     }
 
-    def updateLinkGroup(group: LinkGroup)(newGroup: LinkGroup): Unit = {
-      val newProject = project.copy(moreLinkGroups = project.moreLinkGroups.replace(group, newGroup))
-      props.updateProject(project, newProject)
-    }
-
     def updateProjectName(newName: String): Unit = {
       props.updateProject(project, project.copy(name = newName))
     }
@@ -42,19 +37,16 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
       props.updateProject(project, project.copy(stars = Some(value.toInt).filter(_ > 0)))
     }
 
-    def updateLinksOfGroup(linkGroup: LinkGroup)(newLinks: Seq[Link]): Unit = {
-      val newGroup = linkGroup.copy(links = newLinks)
-      props.updateProject(project, project.copy(moreLinkGroups = project.moreLinkGroups.replace(linkGroup, newGroup)))
-    }
-
-    def updateGroupName(group: LinkGroup)(newName: String): Unit = {
-      val newGroup = group.copy(name = newName)
-      props.updateProject(project, project.copy(moreLinkGroups = project.moreLinkGroups.replace(group, newGroup)))
-    }
-
     def newGroupName(name: String): Unit = {
       val newGroup = new LinkGroup(name, Nil)
       props.updateProject(project, project.copy(moreLinkGroups = project.moreLinkGroups :+ newGroup))
+    }
+
+    def updateLinkGroup(group: LinkGroup)(newGroup: Option[LinkGroup]): Unit = {
+      newGroup match {
+        case Some(g) => props.updateProject(project, project.copy(moreLinkGroups = project.moreLinkGroups.replace(group, g)))
+        case _ => props.updateProject(project, project.copy(moreLinkGroups = project.moreLinkGroups.filterNot(_ == group)))
+      }
     }
 
   }
@@ -80,12 +72,7 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
         </div>
       }
       {
-        project.moreLinkGroups.map(group =>
-          <div className="project-group">
-            {Editable.Input(allowEditing, Some(group.name), self.updateGroupName(group), Some("group-name"))}
-            {ProfileLinks(ProfileLinks.Props(allowEditing, group.links, self.updateLinksOfGroup(group)))}
-          </div>
-        )
+        project.moreLinkGroups.map(group => ProfileLinkGroup(ProfileLinkGroup.Props(allowEditing, group, self.updateLinkGroup(group))))
       }
       {
         if (allowEditing) {
