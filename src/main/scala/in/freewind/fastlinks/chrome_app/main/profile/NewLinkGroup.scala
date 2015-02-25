@@ -20,7 +20,7 @@ object NewLinkGroup extends TypedReactSpec with TypedEventListeners {
 
   @scalax
   override def render(self: This) = {
-     <div><button onClick={self.startEditing}>+</button></div>
+     <div><button onClick={self.startEditing}>+ new link group</button></div>
   }
 
 }

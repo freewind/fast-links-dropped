@@ -48,7 +48,7 @@ object ProfileLinks extends TypedReactSpec with TypedEventListeners {
             LinkForm.New(self.newLink, self.cancel)
           } else {
             <div>
-              <button onClick={self.startAdding}>+</button>
+              <button onClick={self.startAdding}>+ new link</button>
             </div>
           }
         } else None
