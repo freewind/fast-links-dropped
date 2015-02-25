@@ -52,7 +52,7 @@ object Header extends TypedReactSpec with TypedEventListeners {
 
   @scalax
   override def render(self: This) = {
-    <div className="config-header">
+    <div className="header">
       {
         self.props.meta match {
           case Some(meta) => meta.categories.map { category =>
@@ -62,16 +62,18 @@ object Header extends TypedReactSpec with TypedEventListeners {
           case _ => <span>no meta</span>
         }
       }
-      {
-         if (self.props.allowEditing) {
-           <span>
-             <button onClick={self.chooseDataDir}>Choose Data Dir</button>
-           </span>
-           <button onClick={self.doneEditing}>Done</button>
-         } else {
-           <button onClick={self.startEditing}>Edit</button>
-         }
-      }
+      <span className="config-panel">
+        {
+           if (self.props.allowEditing) {
+             <span>
+               <button onClick={self.chooseDataDir}>Choose Data Dir</button>
+             </span>
+             <button onClick={self.doneEditing} className="done">Done</button>
+           } else {
+             <button onClick={self.startEditing}>Edit</button>
+           }
+        }
+      </span>
     </div>
   }
 
