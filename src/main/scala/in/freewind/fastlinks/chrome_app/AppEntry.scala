@@ -19,8 +19,7 @@ object AppEntry extends TypedReactSpec with TypedEventListeners {
       case Some(data@AppStorageData(Some(localPath), Some(localId))) =>
         setState(state.copy(storageData = Some(data)))
         Chrome.fileSystem.isRestorable(localId).foreach {
-          case true => Chrome.fileSystem.restore(localId).foreach { entry =>
-            val dir = entry.asInstanceOf[DirectoryEntry]
+          case true => Chrome.fileSystem.restoreDir(localId).foreach { dir =>
             MetaFiles.readMeta(dir).foreach(m => setState(state.copy(meta = Some(m))))
           }
           case _ => println("#### data dir can't be restored")
@@ -45,8 +44,17 @@ object AppEntry extends TypedReactSpec with TypedEventListeners {
     }
 
     def doneEditing(): Unit = {
-      // FIXME save changed items
+      saveFiles()
       setState(state.copy(allowEditing = false))
+    }
+
+    private def saveFiles(): Unit = {
+      for {
+        data <- self.state.storageData
+        dirId <- data.localDataId
+        dir <- Chrome.fileSystem.restoreDir(dirId)
+        meta <- self.state.meta
+      } MetaFiles.saveMeta(dir, meta)
     }
   }
 

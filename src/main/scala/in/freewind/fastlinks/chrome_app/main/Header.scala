@@ -4,6 +4,7 @@ import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks.chrome_app.{AppBackend, AppStorageData}
 import in.freewind.fastlinks.libs.Chrome
+import in.freewind.fastlinks.wrappers.chrome.DirectoryEntry
 import in.freewind.fastlinks.{Category, Meta}
 
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
@@ -28,7 +29,7 @@ object Header extends TypedReactSpec with TypedEventListeners {
 
     val chooseDataDir = button.onClick(e => {
       Chrome.fileSystem.chooseDirectory().foreach { case (dir, path) =>
-        val localDataId = Chrome.fileSystem.retain(dir)
+        val localDataId = Chrome.fileSystem.retainDir(dir.asInstanceOf[DirectoryEntry])
         val storageData = new AppStorageData(localDataPath = Some(path), localDataId = Some(localDataId))
         props.appBackend.saveStorageData(storageData)
       }

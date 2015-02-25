@@ -1,6 +1,6 @@
 package in.freewind.fastlinks.wrappers.chrome
 
-import org.scalajs.dom.Blob
+import org.scalajs.dom.{Event, ProgressEvent, Blob}
 
 import scalajs.js
 
@@ -24,20 +24,33 @@ trait Entry extends Blob {
   val name: String = js.native
   val isDirectory: Boolean = js.native
   val isFile: Boolean = js.native
-  def getFile(fileName: String, options: js.Any, callback: js.Function1[FileEntry, Unit] = ???): Unit = js.native
+  def getFile(fileName: String, options: js.Any,
+              successCallback: js.Function1[FileEntry, Unit] = ???,
+              errorHandler: js.Function1[FileError, Unit] = ???): Unit = js.native
   def createWriter(callback: js.Function1[FileWriter, Unit] = ???): Unit = js.native
 }
 
 trait FileEntry extends Entry {
   def file(callback: js.Function1[FileEntry, Unit] = ???): Unit = js.native
+  def remove(successCallback: js.Function0[Unit] = ???, errorHandler: js.Function1[FileError, Unit] = ???): Unit = js.native
 }
 
 trait DirectoryEntry extends Entry {
+}
 
+trait FileError extends js.Object {
+  val name: String = js.native
+  val message: String = js.native
+  val code: Int = js.native
 }
 
 trait FileWriter extends js.Object {
+  var onwriteend: js.Function1[ProgressEvent, Unit] = js.native
+  var onerror: js.Function1[Event, Unit] = js.native
   def write(blob: Blob, options: js.Any): Unit = js.native
+  val length: Int = js.native
+  def truncate(length: Int): Unit = js.native
+  def seek(length: Int): Unit = js.native
 }
 
 trait FileEvent extends js.Object {

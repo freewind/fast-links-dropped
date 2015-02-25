@@ -4,12 +4,12 @@ import upickle._
 
 object DataConverter {
 
-  def stringify(projects: Seq[Project]): String = {
-    write(projects)
+  def stringify(category: Category): String = {
+    write(category)
   }
 
-  def parse(json: String): Seq[Project] = {
-    read[Seq[Project]](json)
+  def parse(json: String): Category = {
+    read[Category](json)
   }
 
 }

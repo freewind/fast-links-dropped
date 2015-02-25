@@ -15,4 +15,8 @@ package object fastlinks {
     def empty2option: Option[String] = Option(raw).filterNot(_.isEmpty)
   }
 
+  implicit class RichAny(raw: Any) {
+    def unit(): Unit = ()
+  }
+
 }

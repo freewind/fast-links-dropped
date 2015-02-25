@@ -19,7 +19,7 @@ object ExtensionEntry extends TypedReactSpec with TypedEventListeners {
     for {
       dataOpt <- ExtensionStorageData.load()
       data <- dataOpt
-    } self.setState(self.state.copy(projects = data.projects, dataUrl = data.dataUrl, storageData = Some(data)))
+    } self.setState(self.state.copy(projects = data.category.map(_.projects).getOrElse(Nil), dataUrl = data.dataUrl, storageData = Some(data)))
 
     State()
   }
@@ -29,9 +29,9 @@ object ExtensionEntry extends TypedReactSpec with TypedEventListeners {
     import self._
 
     def onDataFetched(url: String, json: String): Unit = {
-      val storageData = new ExtensionStorageData(projects = DataConverter.parse(json), dataUrl = Some(url))
+      val storageData = new ExtensionStorageData(category = Some(DataConverter.parse(json)), dataUrl = Some(url))
       ExtensionStorageData.save(storageData).foreach { data =>
-        self.setState(state.copy(projects = data.projects, dataUrl = data.dataUrl))
+        self.setState(state.copy(projects = data.category.map(_.projects).getOrElse(Nil), dataUrl = data.dataUrl))
       }
     }
 
