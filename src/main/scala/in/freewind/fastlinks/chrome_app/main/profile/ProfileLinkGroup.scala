@@ -2,29 +2,23 @@ package in.freewind.fastlinks.chrome_app.main.profile
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
+import in.freewind.fastlinks.chrome_app.AppBackend
+import in.freewind.fastlinks.common.Dialog.DialogContext
 import in.freewind.fastlinks.common.Editable
 import in.freewind.fastlinks.{Link, LinkGroup}
 
 object ProfileLinkGroup extends TypedReactSpec with TypedEventListeners {
 
-  case class State(deleting: Boolean = false)
+  case class State()
 
-  case class Props(allowEditing: Boolean, group: LinkGroup, updateLinkGroup: Option[LinkGroup] => Unit)
+  case class Props(allowEditing: Boolean, group: LinkGroup, updateLinkGroup: Option[LinkGroup] => Unit, backend: AppBackend)
 
   override def getInitialState(self: This) = State()
 
   implicit class Closure(self: This) {
     import self._
     val askForDeleting = button.onClick(e => {
-      setState(state.copy(deleting = true))
-    })
-
-    val cancelDeleting = button.onClick(e => {
-      setState(state.copy(deleting = false))
-    })
-
-    val deleteLinkGroup = button.onClick(e => {
-      props.updateLinkGroup(None)
+      props.backend.showDialog(DialogContext("Are you sure to delete this link group?", () => props.updateLinkGroup(None)))
     })
 
     def updateGroupName(group: LinkGroup)(newName: String): Unit = {
@@ -48,18 +42,12 @@ object ProfileLinkGroup extends TypedReactSpec with TypedEventListeners {
       <span>
         {Editable.Input(allowEditing, Some(group.name), self.updateGroupName(group), Some("group-name"))}
         {
-          if (state.deleting) {
-            <div>
-              <div>Are you sure delete this link group?</div>
-              <button onClick={self.deleteLinkGroup}>Ok</button>
-              <button onClick={self.cancelDeleting}>Cancel</button>
-            </div>
-          } else {
+          if (allowEditing) {
             <button onClick={self.askForDeleting}>Delete this link group</button>
-          }
+          } else None
         }
       </span>
-      {ProfileLinks(ProfileLinks.Props(allowEditing, group.links, self.updateLinksOfGroup(group)))}
+      {ProfileLinks(ProfileLinks.Props(allowEditing, group.links, self.updateLinksOfGroup(group), props.backend))}
     </div>
   }
 

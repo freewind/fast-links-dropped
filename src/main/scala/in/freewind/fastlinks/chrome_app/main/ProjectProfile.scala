@@ -2,6 +2,7 @@ package in.freewind.fastlinks.chrome_app.main
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
+import in.freewind.fastlinks.chrome_app.AppBackend
 import in.freewind.fastlinks.common.{Stars, Editable}
 import in.freewind.fastlinks.{LinkGroup, Link, Project}
 import in.freewind.fastlinks.chrome_app.main.profile.{ProfileLinkGroup, NewLinkGroup, EditingStars, ProfileLinks}
@@ -10,7 +11,7 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
 
   case class State()
 
-  case class Props(allowEditing: Boolean, project: Project, updateProject: (Project, Project) => Unit)
+  case class Props(allowEditing: Boolean, project: Project, updateProject: (Project, Project) => Unit, backend: AppBackend)
 
   override def getInitialState(self: This) = State()
 
@@ -53,6 +54,7 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
 
   @scalax
   override def render(self: This) = {
+    import self._
     val project = self.props.project
     val allowEditing = self.props.allowEditing
     <div>
@@ -68,11 +70,11 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
       {Editable.Textarea(allowEditing, project.description, self.updateDesc, Some("project-description"))}
       {
         <div className="project-group">
-          {ProfileLinks(ProfileLinks.Props(allowEditing, project.basicLinks, self.updateBasicLinks))}
+          {ProfileLinks(ProfileLinks.Props(allowEditing, project.basicLinks, self.updateBasicLinks, props.backend))}
         </div>
       }
       {
-        project.moreLinkGroups.map(group => ProfileLinkGroup(ProfileLinkGroup.Props(allowEditing, group, self.updateLinkGroup(group))))
+        project.moreLinkGroups.map(group => ProfileLinkGroup(ProfileLinkGroup.Props(allowEditing, group, self.updateLinkGroup(group), props.backend)))
       }
       {
         if (allowEditing) {

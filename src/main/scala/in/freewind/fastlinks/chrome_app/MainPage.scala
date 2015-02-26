@@ -3,7 +3,7 @@ package in.freewind.fastlinks.chrome_app
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks.chrome_app.main.{Header, ProjectList, ProjectProfile}
-import in.freewind.fastlinks.common.Search
+import in.freewind.fastlinks.common.{Dialog, Search}
 import in.freewind.fastlinks.{Category, Meta, Project}
 
 object MainPage extends TypedReactSpec with TypedEventListeners {
@@ -11,7 +11,7 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
   case class State(currentCategory: Option[Category] = None,
                    currentProject: Option[Project] = None)
 
-  case class Props(meta: Option[Meta] = None, allowEditing: Boolean, appBackend: AppBackend)
+  case class Props(meta: Option[Meta] = None, allowEditing: Boolean, dialogContext: Option[Dialog.DialogContext], appBackend: AppBackend)
 
   override def getInitialState(self: This) = State()
 
@@ -78,11 +78,12 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
       <div className="project-profile">
         {
           self.state.currentProject match {
-            case Some(project) => ProjectProfile(ProjectProfile.Props(props.allowEditing, project, self.updateProject))
+            case Some(project) => ProjectProfile(ProjectProfile.Props(props.allowEditing, project, self.updateProject, props.appBackend))
             case _ => None
           }
         }
       </div>
+      { props.dialogContext.map(ctx => Dialog(Dialog.Props(ctx, appBackend))) }
     </div>
   }
 

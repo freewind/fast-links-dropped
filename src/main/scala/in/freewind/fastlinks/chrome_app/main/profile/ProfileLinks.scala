@@ -3,12 +3,13 @@ package in.freewind.fastlinks.chrome_app.main.profile
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks.Link
+import in.freewind.fastlinks.chrome_app.AppBackend
 
 object ProfileLinks extends TypedReactSpec with TypedEventListeners {
 
   case class State(editing: Boolean = false)
 
-  case class Props(allowEditing: Boolean, links: Seq[Link], updateLinks: Seq[Link] => Unit)
+  case class Props(allowEditing: Boolean, links: Seq[Link], updateLinks: Seq[Link] => Unit, backend: AppBackend)
 
   override def getInitialState(self: This) = State()
 
@@ -29,7 +30,7 @@ object ProfileLinks extends TypedReactSpec with TypedEventListeners {
       props.updateLinks(props.links.replace(oldLink, newLink))
     }
 
-    def deleteLink(link: Link)= () => {
+    def deleteLink(link: Link) = () => {
       props.updateLinks(props.links.filterNot(_ == link))
     }
 
@@ -41,14 +42,15 @@ object ProfileLinks extends TypedReactSpec with TypedEventListeners {
 
   @scalax
   override def render(self: This) = {
+    import self._
     <div className="group-links">
       {
-        self.props.links.map(link =>
-          ProfileLink(ProfileLink.Props(self.props.allowEditing, link, self.updateLink(link), self.deleteLink(link)))
+        props.links.map(link =>
+          ProfileLink(ProfileLink.Props(props.allowEditing, link, self.updateLink(link), self.deleteLink(link), props.backend))
         )
       }
       {
-        if (self.props.allowEditing) {
+        if (props.allowEditing) {
           if (self.state.editing) {
             LinkForm.New(self.newLink, self.cancel)
           } else {

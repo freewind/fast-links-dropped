@@ -2,13 +2,17 @@ package in.freewind.fastlinks.chrome_app
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
+import in.freewind.fastlinks.common.Dialog
 import in.freewind.fastlinks.libs.Chrome
 import in.freewind.fastlinks.{Meta, MetaFiles}
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
 object AppEntry extends TypedReactSpec with TypedEventListeners {
 
-  case class State(meta: Option[Meta] = None, storageData: Option[AppStorageData] = None, allowEditing: Boolean = false)
+  case class State(meta: Option[Meta] = None,
+                   storageData: Option[AppStorageData] = None,
+                   allowEditing: Boolean = false,
+                   dialogContext: Option[Dialog.DialogContext] = None)
 
   case class Props()
 
@@ -37,23 +41,32 @@ object AppEntry extends TypedReactSpec with TypedEventListeners {
 
     import self._
 
-    def saveStorageData(storageData: AppStorageData): Unit = {
+    override def saveStorageData(storageData: AppStorageData): Unit = {
       AppStorageData.save(storageData).foreach { data =>
         setState(state.copy(storageData = Some(data)))
         data.localDataId.foreach(id => initMeta(self, id))
       }
     }
 
-    def updateMeta(meta: Meta): Unit = {
+    override def updateMeta(meta: Meta): Unit = {
       setState(state.copy(meta = Some(meta)))
     }
-    def startEditing(): Unit = {
+
+    override def startEditing(): Unit = {
       setState(state.copy(allowEditing = true))
     }
 
-    def doneEditing(): Unit = {
+    override def doneEditing(): Unit = {
       saveFiles()
       setState(state.copy(allowEditing = false))
+    }
+
+    override def showDialog(props: Dialog.DialogContext): Unit = {
+      setState(state.copy(dialogContext = Some(props)))
+    }
+
+    override def hideDialog(): Unit = {
+      setState(state.copy(dialogContext = None))
     }
 
     private def saveFiles(): Unit = {
@@ -68,8 +81,9 @@ object AppEntry extends TypedReactSpec with TypedEventListeners {
 
   @scalax
   override def render(self: This) = {
+    import self._
     val backend = new Closure(self)
-    MainPage(MainPage.Props(self.state.meta, self.state.allowEditing, backend))
+    MainPage(MainPage.Props(state.meta, state.allowEditing, state.dialogContext, backend))
   }
 }
 
@@ -79,4 +93,6 @@ trait AppBackend {
   def updateMeta(meta: Meta): Unit
   def startEditing(): Unit
   def doneEditing(): Unit
+  def showDialog(context: Dialog.DialogContext): Unit
+  def hideDialog(): Unit
 }

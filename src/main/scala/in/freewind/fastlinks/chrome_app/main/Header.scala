@@ -3,6 +3,7 @@ package in.freewind.fastlinks.chrome_app.main
 import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks.chrome_app.{AppBackend, AppStorageData}
+import in.freewind.fastlinks.common.Editable
 import in.freewind.fastlinks.libs.Chrome
 import in.freewind.fastlinks.wrappers.chrome.DirectoryEntry
 import in.freewind.fastlinks.{Category, Meta}
@@ -47,11 +48,15 @@ object Header extends TypedReactSpec with TypedEventListeners {
       props.appBackend.doneEditing()
     })
 
+    def onUpdateCategoryName(name: String): Unit = {
+
+    }
   }
 
 
   @scalax
   override def render(self: This) = {
+    val allowEditing = self.props.allowEditing
     <div className="header">
       {
         self.props.meta match {
@@ -64,7 +69,7 @@ object Header extends TypedReactSpec with TypedEventListeners {
       }
       <span className="config-panel">
         {
-           if (self.props.allowEditing) {
+           if (allowEditing) {
              <span>
                <button onClick={self.chooseDataDir}>Choose Data Dir</button>
              </span>
