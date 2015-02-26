@@ -60,6 +60,19 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
       setState(state.copy(currentCategory = Some(category), currentProject = category.projects.headOption))
     }
 
+    // FIXME remove duplication
+    def deleteProject(project: Project) = () => {
+      for {
+        meta <- props.meta
+        currentCategory <- state.currentCategory
+        newCurrentCategory = currentCategory.copy(projects = currentCategory.projects.filterNot(_ == project))
+      } {
+        setState(state.copy(currentCategory = Some(newCurrentCategory), currentProject = newCurrentCategory.projects.headOption))
+        backend.updateMeta(meta.copy(categories = meta.categories.replace(currentCategory, newCurrentCategory)))
+      }
+
+    }
+
   }
 
   @scalax
@@ -78,7 +91,7 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
       <div className="project-profile">
         {
           self.state.currentProject match {
-            case Some(project) => ProjectProfile(ProjectProfile.Props(props.allowEditing, project, self.updateProject, props.appBackend))
+            case Some(project) => ProjectProfile(ProjectProfile.Props(props.allowEditing, project, self.updateProject, self.deleteProject(project), props.appBackend))
             case _ => None
           }
         }

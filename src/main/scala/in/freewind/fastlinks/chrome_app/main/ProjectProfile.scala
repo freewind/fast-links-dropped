@@ -3,6 +3,7 @@ package in.freewind.fastlinks.chrome_app.main
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks.chrome_app.AppBackend
+import in.freewind.fastlinks.common.Dialog.DialogContext
 import in.freewind.fastlinks.common.{Stars, Editable}
 import in.freewind.fastlinks.{LinkGroup, Link, Project}
 import in.freewind.fastlinks.chrome_app.main.profile.{ProfileLinkGroup, NewLinkGroup, EditingStars, ProfileLinks}
@@ -11,7 +12,7 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
 
   case class State()
 
-  case class Props(allowEditing: Boolean, project: Project, updateProject: (Project, Project) => Unit, backend: AppBackend)
+  case class Props(allowEditing: Boolean, project: Project, updateProject: (Project, Project) => Unit, deleteProject: () => Unit, backend: AppBackend)
 
   override def getInitialState(self: This) = State()
 
@@ -50,6 +51,9 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
       }
     }
 
+    val confirmDeletion = button.onClick(e => {
+      props.backend.showDialog(DialogContext("Are you sure to delete this project?", props.deleteProject))
+    })
   }
 
   @scalax
@@ -58,7 +62,14 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
     val project = self.props.project
     val allowEditing = self.props.allowEditing
     <div>
-      {Editable.Input(allowEditing, Some(project.name), self.updateProjectName, Some("project-name"))}
+      <div>
+        { Editable.Input(allowEditing, Some(project.name), self.updateProjectName, Some("project-name")) }
+        {
+          if (allowEditing) {
+            <button onClick={self.confirmDeletion}>delete this project</button>
+          } else None
+        }
+      </div>
       <div className="project-stars">
         {
           Editable.Input(allowEditing, None, self.updateStars,
