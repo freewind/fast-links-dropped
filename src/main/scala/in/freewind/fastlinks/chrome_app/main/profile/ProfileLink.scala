@@ -23,7 +23,7 @@ object ProfileLink extends TypedReactSpec with TypedEventListeners {
     })
 
     val startEditing = element.onClick(e => {
-      e.preventDefault()
+      e.stopPropagation()
       setState(state.copy(editing = true))
     })
 

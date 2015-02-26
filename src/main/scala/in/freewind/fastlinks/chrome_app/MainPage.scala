@@ -33,15 +33,15 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
       setState(state.copy(currentProject = Some(project)))
     }
 
-    def onNewProject(projectName: String) = {
+    def updateCurrentProjects(newProjects: Seq[Project], currentProject: Option[Project]): Unit = {
       for {
         meta <- props.meta
         currentCategory <- state.currentCategory
-        newProject = Project(projectName)
-        newCurrentCategory = currentCategory.copy(projects = currentCategory.projects :+ newProject)
+        newCurrentCategory = currentCategory.copy(projects = newProjects)
       } {
-        setState(state.copy(currentCategory = Some(newCurrentCategory), currentProject = Some(newProject)))
-        backend.updateMeta(meta.copy(categories = meta.categories.replace(currentCategory, newCurrentCategory)))
+        setState(state.copy(currentCategory = Some(newCurrentCategory), currentProject = currentProject), () => {
+          backend.updateMeta(meta.copy(categories = meta.categories.replace(currentCategory, newCurrentCategory)))
+        })
       }
     }
 
@@ -51,8 +51,9 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
         currentCategory <- state.currentCategory
         newCurrentCategory = currentCategory.copy(projects = currentCategory.projects.replace(oldProject, newProject))
       } {
-        setState(state.copy(currentCategory = Some(newCurrentCategory), currentProject = Some(newProject)))
-        backend.updateMeta(meta.copy(categories = meta.categories.replace(currentCategory, newCurrentCategory)))
+        setState(state.copy(currentCategory = Some(newCurrentCategory), currentProject = Some(newProject)), () => {
+          backend.updateMeta(meta.copy(categories = meta.categories.replace(currentCategory, newCurrentCategory)))
+        })
       }
     }
 
@@ -67,8 +68,9 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
         currentCategory <- state.currentCategory
         newCurrentCategory = currentCategory.copy(projects = currentCategory.projects.remove(project))
       } {
-        setState(state.copy(currentCategory = Some(newCurrentCategory), currentProject = newCurrentCategory.projects.headOption))
-        backend.updateMeta(meta.copy(categories = meta.categories.replace(currentCategory, newCurrentCategory)))
+        setState(state.copy(currentCategory = Some(newCurrentCategory), currentProject = newCurrentCategory.projects.headOption), () => {
+          backend.updateMeta(meta.copy(categories = meta.categories.replace(currentCategory, newCurrentCategory)))
+        })
       }
 
     }
@@ -79,9 +81,12 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
         categories = meta.categories.remove(category)
       } {
         if (state.currentCategory == Some(category)) {
-          setState(state.copy(currentCategory = categories.headOption, currentProject = categories.headOption.flatMap(_.projects.headOption)))
+          setState(state.copy(currentCategory = categories.headOption, currentProject = categories.headOption.flatMap(_.projects.headOption)), () => {
+            backend.updateMeta(meta.copy(categories = categories))
+          })
+        } else {
+          backend.updateMeta(meta.copy(categories = categories))
         }
-        backend.updateMeta(meta.copy(categories = categories))
       }
     }
 
@@ -91,8 +96,9 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
         meta <- props.meta
         categories = meta.categories :+ newCategory
       } {
-        setState(state.copy(currentCategory = Some(newCategory), currentProject = None))
-        backend.updateMeta(meta.copy(categories = categories))
+        setState(state.copy(currentCategory = Some(newCategory), currentProject = None), () => {
+          backend.updateMeta(meta.copy(categories = categories))
+        })
       }
     }
   }
@@ -107,7 +113,10 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
       { Search(Search.Props(state.currentCategory.map(_.projects).getOrElse(Nil))) }
       <div className="sidebar">
         <div className="project-list">
-          { ProjectList(ProjectList.Props(currentCategory, currentProject, self.props.allowEditing, self.onSelectProject, self.onNewProject)) }
+          {
+            val projects = currentCategory.map(_.projects).getOrElse(Nil)
+            ProjectList(ProjectList.Props(projects, currentProject, self.props.allowEditing, self.onSelectProject, self.updateCurrentProjects))
+          }
         </div>
       </div>
       <div className="project-profile">

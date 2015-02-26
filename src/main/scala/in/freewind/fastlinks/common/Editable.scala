@@ -43,7 +43,7 @@ object Editable extends TypedReactSpec with TypedEventListeners {
     import self._
 
     val startEditing = element.onClick(e => {
-      e.preventDefault()
+      e.stopPropagation()
       setState(state.copy(editing = true), () => {
         val node = getEditingNode
         props.value.foreach(v => node.value = v)
