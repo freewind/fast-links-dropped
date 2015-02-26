@@ -65,7 +65,7 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
       for {
         meta <- props.meta
         currentCategory <- state.currentCategory
-        newCurrentCategory = currentCategory.copy(projects = currentCategory.projects.filterNot(_ == project))
+        newCurrentCategory = currentCategory.copy(projects = currentCategory.projects.remove(project))
       } {
         setState(state.copy(currentCategory = Some(newCurrentCategory), currentProject = newCurrentCategory.projects.headOption))
         backend.updateMeta(meta.copy(categories = meta.categories.replace(currentCategory, newCurrentCategory)))
@@ -73,6 +73,28 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
 
     }
 
+    def deleteCategory(category: Category): Unit = {
+      for {
+        meta <- props.meta
+        categories = meta.categories.remove(category)
+      } {
+        if (state.currentCategory == Some(category)) {
+          setState(state.copy(currentCategory = categories.headOption, currentProject = categories.headOption.flatMap(_.projects.headOption)))
+        }
+        backend.updateMeta(meta.copy(categories = categories))
+      }
+    }
+
+    def newCategory(name: String): Unit = {
+      val newCategory = new Category(name, projects = Nil)
+      for {
+        meta <- props.meta
+        categories = meta.categories :+ newCategory
+      } {
+        setState(state.copy(currentCategory = Some(newCategory), currentProject = None))
+        backend.updateMeta(meta.copy(categories = categories))
+      }
+    }
   }
 
   @scalax
@@ -81,7 +103,7 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
     val appBackend = self.props.appBackend
     val (currentCategory, currentProject) = (self.state.currentCategory, self.state.currentProject)
     <div id="main-page">
-      { Header(Header.Props(props.meta, self.state.currentCategory, props.allowEditing, self.selectCategory, appBackend)) }
+      { Header(Header.Props(props.meta, self.state.currentCategory, props.allowEditing, self.selectCategory, self.deleteCategory, self.newCategory, appBackend)) }
       { Search(Search.Props(state.currentCategory.map(_.projects).getOrElse(Nil))) }
       <div className="sidebar">
         <div className="project-list">

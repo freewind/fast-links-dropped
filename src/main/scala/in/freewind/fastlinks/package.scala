@@ -9,6 +9,9 @@ package object fastlinks {
         case other => other
       }
     }
+    def remove(item: T): Seq[T] = {
+      seq diff Seq(item)
+    }
   }
 
   implicit class RichString(raw: String) {

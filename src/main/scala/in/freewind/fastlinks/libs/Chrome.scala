@@ -86,6 +86,15 @@ object Chrome {
       })
       p.future
     }
+
+    def removeFile(file: FileEntry): Future[Unit] = {
+      val p = Promise[Unit]()
+      file.remove(() => p.success(()).unit(), (error: FileError) => {
+        p.failure(new IOException("Can't delete file: " + file.name + ", error: " + error.message)).unit()
+      })
+      p.future
+    }
+
   }
 
   val storage = new {

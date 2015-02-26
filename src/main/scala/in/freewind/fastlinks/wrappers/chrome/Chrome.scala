@@ -36,6 +36,11 @@ trait FileEntry extends Entry {
 }
 
 trait DirectoryEntry extends Entry {
+  def createReader(): DirectoryReader = js.native
+}
+
+trait DirectoryReader extends js.Object {
+  def readEntries(successCallback: js.Function1[js.Array[Entry], Unit], errorHandler: js.Function1[FileError, Unit] = ???): Unit = js.native
 }
 
 trait FileError extends js.Object {

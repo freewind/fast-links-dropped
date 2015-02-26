@@ -31,7 +31,7 @@ object ProfileLinks extends TypedReactSpec with TypedEventListeners {
     }
 
     def deleteLink(link: Link) = () => {
-      props.updateLinks(props.links.filterNot(_ == link))
+      props.updateLinks(props.links.remove(link))
     }
 
     def cancel(): Unit = {

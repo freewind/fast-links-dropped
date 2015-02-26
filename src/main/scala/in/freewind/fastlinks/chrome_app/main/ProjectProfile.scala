@@ -47,7 +47,7 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
     def updateLinkGroup(group: LinkGroup)(newGroup: Option[LinkGroup]): Unit = {
       newGroup match {
         case Some(g) => props.updateProject(project, project.copy(moreLinkGroups = project.moreLinkGroups.replace(group, g)))
-        case _ => props.updateProject(project, project.copy(moreLinkGroups = project.moreLinkGroups.filterNot(_ == group)))
+        case _ => props.updateProject(project, project.copy(moreLinkGroups = project.moreLinkGroups.remove(group)))
       }
     }
 
