@@ -11,7 +11,8 @@ import org.scalajs.dom.Event
 object MainPage extends TypedReactSpec with TypedEventListeners {
 
   case class State(currentCategory: Option[Category] = None,
-                   currentProject: Option[Project] = None)
+                   currentProject: Option[Project] = None,
+                   focusOnSearch: Option[() => Unit] = None)
 
   case class Props(meta: Option[Meta] = None, allowEditing: Boolean, dialogContext: Option[Dialog.DialogContext], appBackend: AppBackend)
 
@@ -60,7 +61,9 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
     }
 
     def selectCategory(category: Category): Unit = {
-      setState(state.copy(currentCategory = Some(category), currentProject = category.projects.headOption))
+      setState(state.copy(currentCategory = Some(category), currentProject = category.projects.headOption), () => {
+        state.focusOnSearch.foreach(_())
+      })
     }
 
     // FIXME remove duplication
@@ -118,12 +121,19 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
   }
 
   override def componentDidMount(self: This): Unit = {
-    activeSearchWhenWindowActive(self)
+    import self._
+    setState(state.copy(focusOnSearch = Some(createFocusOnSearch(self))), () => {
+      activeSearchWhenWindowActive(self)
+    })
+  }
+
+  private def createFocusOnSearch(self: This) = () => {
+    Focusable.cast(self.refs("search")).foreach(_.focus())
   }
 
   private def activeSearchWhenWindowActive(self: This): Unit = {
     dom.window.addEventListener("focus", (event: Event) => {
-      Focusable.cast(self.refs("search")).foreach(_.focus())
+      self.state.focusOnSearch.foreach(_())
     })
   }
 
