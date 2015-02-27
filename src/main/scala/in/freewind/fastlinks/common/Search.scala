@@ -39,20 +39,21 @@ object Search extends TypedReactSpec with TypedEventListeners {
       ))
     })
 
+    val onClearSearch = button.onClick(_ => {
+      val search = refs(RefSearch).getDOMNode()
+      search.asInstanceOf[HTMLInputElement].value = ""
+      search.focus()
+      onSearch.apply(null)
+    })
+
     val onKeyUp = input.onKeyUp(e => {
       e.which match {
         case KeyCode.up => moveSelectedLink(-1)
         case KeyCode.down => moveSelectedLink(1)
         case KeyCode.enter => clickOnHighlightLink()
+        case KeyCode.escape => onClearSearch.apply(null)
         case _ =>
       }
-    })
-
-    val onClearSearch = button.onClick(e => {
-      val search = refs(RefSearch).getDOMNode()
-      search.asInstanceOf[HTMLInputElement].value = ""
-      search.focus()
-      onSearch.apply(null)
     })
 
     private def clickOnHighlightLink(): Unit = {
