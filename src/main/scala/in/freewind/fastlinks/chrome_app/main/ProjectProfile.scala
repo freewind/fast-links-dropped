@@ -64,6 +64,14 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
       updateProjectWithGroups(reverseAll(moveLinkUp(groups, link)))
     }
 
+    def moveGroupUp(group: LinkGroup): Unit = {
+      props.updateProject(project, project.copy(linkGroups = moveUp(project.linkGroups, group)))
+    }
+
+    def moveGroupDown(group: LinkGroup): Unit = {
+      props.updateProject(project, project.copy(linkGroups = moveUp(project.linkGroups.reverse, group).reverse))
+    }
+
     private def reverseAll(groups: Seq[LinkGroup]) = {
       groups.map(g => g.copy(links = g.links.reverse)).reverse
     }
@@ -113,7 +121,9 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
       </div>
       {Editable.Textarea(allowEditing, project.description, self.updateDesc, Some("project-description"))}
       {
-        project.linkGroups.map(group => ProfileLinkGroup(ProfileLinkGroup.Props(allowEditing, group, self.updateLinkGroup(group), self.moveLinkUp, self.moveLinkDown, props.backend)))
+        project.linkGroups.map(group => ProfileLinkGroup(ProfileLinkGroup.Props(
+          allowEditing, group, self.updateLinkGroup(group), self.moveLinkUp, self.moveLinkDown, () => self.moveGroupUp(group), () => self.moveGroupDown(group), props.backend
+        )))
       }
       {
         if (allowEditing) {

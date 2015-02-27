@@ -3,6 +3,7 @@ package in.freewind.fastlinks.chrome_app.main.profile
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks.chrome_app.AppBackend
+import in.freewind.fastlinks.chrome_app.main.Move
 import in.freewind.fastlinks.common.Dialog.DialogContext
 import in.freewind.fastlinks.common.Editable
 import in.freewind.fastlinks.{Link, LinkGroup}
@@ -12,7 +13,8 @@ object ProfileLinkGroup extends TypedReactSpec with TypedEventListeners {
   case class State()
 
   case class Props(allowEditing: Boolean, group: LinkGroup, updateLinkGroup: Option[LinkGroup] => Unit,
-                   moveLinkUp: (Link) => Unit, moveLinkDown: (Link) => Unit, backend: AppBackend)
+                   moveLinkUp: Link => Unit, moveLinkDown: Link => Unit,
+                   moveGroupUp: () => Unit, moveGroupDown: () => Unit, backend: AppBackend)
 
   override def getInitialState(self: This) = State()
 
@@ -44,7 +46,11 @@ object ProfileLinkGroup extends TypedReactSpec with TypedEventListeners {
         {Editable.Input(allowEditing, Some(group.name), self.updateGroupName(group), Some("group-name"))}
         {
           if (allowEditing) {
-            <button onClick={self.askForDeleting}>Delete this link group</button>
+            <span>
+              <button onClick={self.askForDeleting}>Delete this link group</button>
+              { Move(Move.Props(props.moveGroupUp, props.moveGroupDown)) }
+            </span>
+
           } else None
         }
       </span>
