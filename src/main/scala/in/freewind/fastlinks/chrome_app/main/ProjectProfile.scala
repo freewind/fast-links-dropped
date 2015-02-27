@@ -26,11 +26,6 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
       props.updateProject(project, project.copy(description = Option(desc).filterNot(_.isEmpty)))
     }
 
-    def updateBasicLinks(newLinks: Seq[Link]): Unit = {
-      val newProject = project.copy(basicLinks = newLinks)
-      props.updateProject(project, newProject)
-    }
-
     def updateProjectName(newName: String): Unit = {
       props.updateProject(project, project.copy(name = newName))
     }
@@ -41,13 +36,13 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
 
     def newGroupName(name: String): Unit = {
       val newGroup = new LinkGroup(name, Nil)
-      props.updateProject(project, project.copy(moreLinkGroups = project.moreLinkGroups :+ newGroup))
+      props.updateProject(project, project.copy(linkGroups = project.linkGroups :+ newGroup))
     }
 
     def updateLinkGroup(group: LinkGroup)(newGroup: Option[LinkGroup]): Unit = {
       newGroup match {
-        case Some(g) => props.updateProject(project, project.copy(moreLinkGroups = project.moreLinkGroups.replace(group, g)))
-        case _ => props.updateProject(project, project.copy(moreLinkGroups = project.moreLinkGroups.remove(group)))
+        case Some(g) => props.updateProject(project, project.copy(linkGroups = project.linkGroups.replace(group, g)))
+        case _ => props.updateProject(project, project.copy(linkGroups = project.linkGroups.remove(group)))
       }
     }
 
@@ -56,25 +51,16 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
     })
 
     def moveLinkUp(link: Link): Unit = {
-      val groups = combineLinksAndGroups(project)
+      val groups = project.linkGroups
       updateProjectWithGroups(moveLinkUp(groups, link))
     }
 
-    // FIXME give basic links a real group?
-    private def combineLinksAndGroups(project: Project) = {
-      Seq(LinkGroup("__basicLinks__", project.basicLinks)) ++ project.moreLinkGroups
-    }
-
     private def updateProjectWithGroups(newGroups: Seq[LinkGroup]): Unit = {
-      val hasBasicLinks = newGroups.headOption.exists(_.name == "__basicLinks__")
-      val newProject = project.copy(
-        basicLinks = if (hasBasicLinks) newGroups.headOption.map(_.links).getOrElse(Nil) else Nil,
-        moreLinkGroups = if (hasBasicLinks) newGroups.tail else newGroups)
-      props.updateProject(project, newProject)
+      props.updateProject(project, project.copy(linkGroups = newGroups))
     }
 
     def moveLinkDown(link: Link): Unit = {
-      val groups = reverseAll(combineLinksAndGroups(project))
+      val groups = reverseAll(project.linkGroups)
       updateProjectWithGroups(reverseAll(moveLinkUp(groups, link)))
     }
 
@@ -127,12 +113,7 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
       </div>
       {Editable.Textarea(allowEditing, project.description, self.updateDesc, Some("project-description"))}
       {
-        <div className="project-group">
-          {ProfileLinks(ProfileLinks.Props(allowEditing, project.basicLinks, self.updateBasicLinks, self.moveLinkUp, self.moveLinkDown, props.backend))}
-        </div>
-      }
-      {
-        project.moreLinkGroups.map(group => ProfileLinkGroup(ProfileLinkGroup.Props(allowEditing, group, self.updateLinkGroup(group), self.moveLinkUp, self.moveLinkDown, props.backend)))
+        project.linkGroups.map(group => ProfileLinkGroup(ProfileLinkGroup.Props(allowEditing, group, self.updateLinkGroup(group), self.moveLinkUp, self.moveLinkDown, props.backend)))
       }
       {
         if (allowEditing) {

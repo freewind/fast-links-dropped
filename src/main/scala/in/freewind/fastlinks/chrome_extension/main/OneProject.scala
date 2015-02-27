@@ -45,11 +45,8 @@ object OneProject extends TypedReactSpec with TypedEventListeners {
           p.description.map(_ => <div className="project-description">{p.description}</div>)
         )
       }
-      <div className="basic-links">
-        { showLinks(p.basicLinks) }
-      </div>
       {
-        p.moreLinkGroups.map(group =>
+        p.linkGroups.map(group =>
           <div className="group-links">
             <div className="group-name">{group.name}</div>
             { showLinks(group.links) }

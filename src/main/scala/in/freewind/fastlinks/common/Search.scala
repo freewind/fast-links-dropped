@@ -136,7 +136,7 @@ object Search extends TypedReactSpec with TypedEventListeners {
     categories.flatMap { category =>
       val links = for {
         project <- category.projects
-        link <- project.basicLinks ++: project.moreLinkGroups.flatMap(_.links)
+        link <- project.linkGroups.flatMap(_.links)
         weight = matches(project, link, keyword)
         if weight > 0
       } yield LinkResult(project.name, link, weight)
