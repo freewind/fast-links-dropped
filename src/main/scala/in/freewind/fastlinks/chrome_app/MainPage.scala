@@ -122,7 +122,7 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
     val (currentCategory, currentProject) = (self.state.currentCategory, self.state.currentProject)
     <div id="main-page">
       { Header(Header.Props(props.meta, self.state.currentCategory, props.allowEditing, self.selectCategory, self.deleteCategory, self.newCategory, self.moveCategoryUp, self.moveCategoryDown, appBackend)) }
-      { Search(Search.Props(state.currentCategory.map(_.projects).getOrElse(Nil))) }
+      { Search(Search.Props(props.meta.map(_.categories).getOrElse(Nil))) }
       <div className="sidebar">
         <div className="project-list">
           {

@@ -1,15 +1,16 @@
 package in.freewind.fastlinks.chrome_extension
 
-import com.xored.scalajs.react.{scalax, TypedReactSpec}
 import com.xored.scalajs.react.util.TypedEventListeners
+import com.xored.scalajs.react.{TypedReactSpec, scalax}
+import in.freewind.fastlinks.chrome_extension.main.{CategoryList, Setup}
 import in.freewind.fastlinks.common.Search
-import in.freewind.fastlinks.{Project, DataConverter}
-import in.freewind.fastlinks.chrome_extension.main.{ProjectList, Setup}
+import in.freewind.fastlinks.{Category, DataConverter}
+
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 
 object ExtensionEntry extends TypedReactSpec with TypedEventListeners {
 
-  case class State(projects: Seq[Project] = Nil,
+  case class State(category: Option[Category] = None,
                    dataUrl: Option[String] = None,
                    storageData: Option[ExtensionStorageData] = None)
 
@@ -19,7 +20,7 @@ object ExtensionEntry extends TypedReactSpec with TypedEventListeners {
     for {
       dataOpt <- ExtensionStorageData.load()
       data <- dataOpt
-    } self.setState(self.state.copy(projects = data.category.map(_.projects).getOrElse(Nil), dataUrl = data.dataUrl, storageData = Some(data)))
+    } self.setState(self.state.copy(category = data.category, dataUrl = data.dataUrl, storageData = Some(data)))
 
     State()
   }
@@ -31,7 +32,7 @@ object ExtensionEntry extends TypedReactSpec with TypedEventListeners {
     def onDataFetched(url: String, json: String): Unit = {
       val storageData = new ExtensionStorageData(category = Some(DataConverter.parse(json)), dataUrl = Some(url))
       ExtensionStorageData.save(storageData).foreach { data =>
-        self.setState(state.copy(projects = data.category.map(_.projects).getOrElse(Nil), dataUrl = data.dataUrl))
+        self.setState(state.copy(category = data.category, dataUrl = data.dataUrl))
       }
     }
 
@@ -39,8 +40,9 @@ object ExtensionEntry extends TypedReactSpec with TypedEventListeners {
 
   @scalax
   override def render(self: This) = {
+    import self._
     <div id="main-page">
-      {Search(Search.Props(self.state.projects, Some(ProjectList(ProjectList.Props(self.state.projects)))))}
+      {Search(Search.Props(state.category.toList, Some(CategoryList(CategoryList.Props(state.category.toList)))))}
       {Setup(Setup.Props(self.onDataFetched, self.state.dataUrl))}
     </div>
   }

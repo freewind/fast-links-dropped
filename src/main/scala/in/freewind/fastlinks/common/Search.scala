@@ -2,7 +2,8 @@ package in.freewind.fastlinks.common
 
 import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
 import com.xored.scalajs.react.{ReactDOM, TypedReactSpec, scalax}
-import in.freewind.fastlinks.{Link, Project}
+import in.freewind.fastlinks.common.SearchResults.{LinkResult, CategoryResult}
+import in.freewind.fastlinks.{Category, Link, Project}
 import org.scalajs.dom.HTMLInputElement
 import org.scalajs.dom.extensions.KeyCode
 
@@ -13,10 +14,10 @@ object Search extends TypedReactSpec with TypedEventListeners {
   private val HighlightClass = "highlight-search-item"
 
   case class State(keyword: Option[String] = None,
-                   searchResults: Seq[Result] = Nil,
-                   highlightSearchItem: Option[Result] = None)
+                   searchResults: Seq[CategoryResult] = Nil,
+                   highlightSearchItem: Option[LinkResult] = None)
 
-  case class Props(projects: Seq[Project], nonSearch: Option[ReactDOM] = None)
+  case class Props(categories: Seq[Category], nonSearch: Option[ReactDOM] = None)
 
   override def getInitialState(self: This) = State()
 
@@ -30,11 +31,11 @@ object Search extends TypedReactSpec with TypedEventListeners {
 
     val onSearch = input.onChange(e => {
       val keyword = Option(getKeyword).filterNot(_.isEmpty)
-      val results = keyword.map(filterSearchResult(self.props.projects)).getOrElse(Nil)
+      val results = keyword.map(filterSearchResult(self.props.categories)).getOrElse(Nil)
 
       setState(state.copy(keyword = keyword,
         searchResults = results,
-        highlightSearchItem = results.headOption
+        highlightSearchItem = results.headOption.flatMap(_.links.headOption)
       ))
     })
 
@@ -59,12 +60,14 @@ object Search extends TypedReactSpec with TypedEventListeners {
     }
 
     private def moveSelectedLink(step: Int): Unit = {
+      val allLinks = state.searchResults.flatMap(_.links)
+
       for {
         hl <- state.highlightSearchItem
-        index = state.searchResults.indexOf(hl)
-        total = state.searchResults.length
+        index = allLinks.indexOf(hl)
+        total = allLinks.length
         newIndex = (index + step + total) % total
-      } setState(state.copy(highlightSearchItem = Some(state.searchResults(newIndex))))
+      } setState(state.copy(highlightSearchItem = Some(allLinks(newIndex))))
     }
   }
 
@@ -85,15 +88,22 @@ object Search extends TypedReactSpec with TypedEventListeners {
           case Some(keyword) =>
             <div className="search-results">
               {
-                searchResults.map { case item =>
-                  val isHighlight = Some(item) == self.state.highlightSearchItem
-                  val className = ClassName("result-item" -> true, HighlightClass -> isHighlight)
-                  val refHighlightLink = if (isHighlight) RefHighlightItem else ""
-                  <div className={className}>
-                    <span className="result-name">[{item.projectName}{item.link.name.map(":" + _).getOrElse("")}]</span>
-                    <a href={item.link.url} target="_blank" ref={refHighlightLink}>
-                      <span className="link-url">{item.link.url}</span>
-                    </a>
+                searchResults.map { category =>
+                  <div className="category-result">
+                    <div className="category-name">{category.name}</div>
+                    {
+                      category.links.map { case item =>
+                        val isHighlight = Some(item) == self.state.highlightSearchItem
+                        val className = ClassName("result-item" -> true, HighlightClass -> isHighlight)
+                        val refHighlightLink = if (isHighlight) RefHighlightItem else ""
+                        <div className={className}>
+                          <span className="result-name">[{item.projectName}{item.link.name.map(":" + _).getOrElse("")}]</span>
+                          <a href={item.link.url} target="_blank" ref={refHighlightLink}>
+                            <span className="link-url">{item.link.url}</span>
+                          </a>
+                        </div>
+                      }
+                    }
                   </div>
                 }
               }
@@ -104,9 +114,7 @@ object Search extends TypedReactSpec with TypedEventListeners {
     </div>
   }
 
-  case class Result(projectName: String, link: Link, weight: Int)
-
-  private def filterSearchResult(projects: Seq[Project])(keyword: String): Seq[Result] = {
+  private def filterSearchResult(categories: Seq[Category])(keyword: String): Seq[CategoryResult] = {
     def contain(s1: String, s2: String): Boolean = {
       s1.toLowerCase.contains(s2.toLowerCase)
     }
@@ -117,12 +125,25 @@ object Search extends TypedReactSpec with TypedEventListeners {
       else 0
     }
 
-    val results = for {
-      project <- projects
-      link <- project.basicLinks ++: project.moreLinkGroups.flatMap(_.links)
-    } yield Result(project.name, link, matches(project, link, keyword))
+    categories.flatMap { category =>
+      val links = for {
+        project <- category.projects
+        link <- project.basicLinks ++: project.moreLinkGroups.flatMap(_.links)
+        weight = matches(project, link, keyword)
+        if weight > 0
+      } yield LinkResult(project.name, link, weight)
 
-    results.filter(_.weight > 0).sortBy(r => -r.weight)
+      links.sortBy(l => -l.weight) match {
+        case Nil => None
+        case ll => Some(CategoryResult(category.name, ll))
+      }
+    }
   }
 
 }
+
+object SearchResults {
+  case class CategoryResult(name: String, links: Seq[LinkResult])
+  case class LinkResult(projectName: String, link: Link, weight: Int)
+}
+
