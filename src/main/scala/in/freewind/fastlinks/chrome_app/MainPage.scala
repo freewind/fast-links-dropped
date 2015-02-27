@@ -3,8 +3,10 @@ package in.freewind.fastlinks.chrome_app
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks.chrome_app.main.{MoveUpSupport, Header, ProjectList, ProjectProfile}
-import in.freewind.fastlinks.common.{Dialog, Search}
+import in.freewind.fastlinks.common.{Focusable, Dialog, Search}
 import in.freewind.fastlinks.{Category, Meta, Project}
+import org.scalajs.dom
+import org.scalajs.dom.Event
 
 object MainPage extends TypedReactSpec with TypedEventListeners {
 
@@ -115,6 +117,16 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
     }
   }
 
+  override def componentDidMount(self: This): Unit = {
+    activeSearchWhenWindowActive(self)
+  }
+
+  private def activeSearchWhenWindowActive(self: This): Unit = {
+    dom.window.addEventListener("focus", (event: Event) => {
+      Focusable.cast(self.refs("search")).foreach(_.focus())
+    })
+  }
+
   @scalax
   override def render(self: This) = {
     import self._
@@ -122,7 +134,7 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
     val (currentCategory, currentProject) = (self.state.currentCategory, self.state.currentProject)
     <div id="main-page">
       { Header(Header.Props(props.meta, self.state.currentCategory, props.allowEditing, self.selectCategory, self.deleteCategory, self.newCategory, self.moveCategoryUp, self.moveCategoryDown, appBackend)) }
-      { Search(Search.Props(props.meta.map(_.categories).getOrElse(Nil))) }
+      { Search(Search.Props(props.meta.map(_.categories).getOrElse(Nil)), ref = "search") }
       <div className="sidebar">
         <div className="project-list">
           {

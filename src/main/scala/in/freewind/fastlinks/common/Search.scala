@@ -1,7 +1,8 @@
 package in.freewind.fastlinks.common
 
+import com.xored.scalajs.react.export._
 import com.xored.scalajs.react.util.{ClassName, TypedEventListeners}
-import com.xored.scalajs.react.{ReactDOM, TypedReactSpec, scalax}
+import com.xored.scalajs.react.{export, ReactDOM, TypedReactSpec, scalax}
 import in.freewind.fastlinks.common.SearchResults.{LinkResult, CategoryResult}
 import in.freewind.fastlinks.{Category, Link, Project}
 import org.scalajs.dom.HTMLInputElement
@@ -20,6 +21,12 @@ object Search extends TypedReactSpec with TypedEventListeners {
   case class Props(categories: Seq[Category], nonSearch: Option[ReactDOM] = None)
 
   override def getInitialState(self: This) = State()
+
+  override def exports(): List[Export] = export.export1("focus", focus) :: super.exports()
+
+  def focus(self: This): Unit = {
+    self.refs(RefSearch).getDOMNode().focus()
+  }
 
   implicit class Closure(self: This) {
 
