@@ -18,7 +18,7 @@ object ProjectList extends TypedReactSpec with TypedEventListeners {
 
   override def getInitialState(self: This) = State()
 
-  implicit class Closure(self: This) {
+  implicit class Closure(self: This) extends MoveUpSupport {
     import self._
     def selectProject(project: Project) = button.onClick(e => {
       props.onSelectProject(project)
@@ -33,23 +33,19 @@ object ProjectList extends TypedReactSpec with TypedEventListeners {
     })
 
     def moveUp(project: Project) = () => {
-      val newProjects = swap(props.projects, project)
+      val newProjects = moveProjectUp(props.projects, project)
       props.updateCurrentProjects(newProjects, props.currentProject)
     }
 
     def moveDown(project: Project) = () => {
-      val newProjects = swap(props.projects.reverse, project).reverse
+      val newProjects = moveProjectUp(props.projects.reverse, project).reverse
       props.updateCurrentProjects(newProjects, props.currentProject)
     }
 
-    private def swap(projects: Seq[Project], target: Project): Seq[Project] = {
-      projects.span(_ != target) match {
-        case (Nil, right) => right
-        case (left, right) => left.init ++ Seq(right.head, left.last) ++ right.tail
-      }
+    private def moveProjectUp(projects: Seq[Project], target: Project): Seq[Project] = {
+      moveUp[Project](projects, target)
     }
   }
-
 
   @scalax
   override def render(self: This) = {

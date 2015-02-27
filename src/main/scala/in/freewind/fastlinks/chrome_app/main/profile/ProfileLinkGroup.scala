@@ -11,7 +11,8 @@ object ProfileLinkGroup extends TypedReactSpec with TypedEventListeners {
 
   case class State()
 
-  case class Props(allowEditing: Boolean, group: LinkGroup, updateLinkGroup: Option[LinkGroup] => Unit, backend: AppBackend)
+  case class Props(allowEditing: Boolean, group: LinkGroup, updateLinkGroup: Option[LinkGroup] => Unit,
+                   moveLinkUp: (Link) => Unit, moveLinkDown: (Link) => Unit, backend: AppBackend)
 
   override def getInitialState(self: This) = State()
 
@@ -47,7 +48,7 @@ object ProfileLinkGroup extends TypedReactSpec with TypedEventListeners {
           } else None
         }
       </span>
-      {ProfileLinks(ProfileLinks.Props(allowEditing, group.links, self.updateLinksOfGroup(group), props.backend))}
+      {ProfileLinks(ProfileLinks.Props(allowEditing, group.links, self.updateLinksOfGroup(group), props.moveLinkUp, props.moveLinkDown, props.backend))}
     </div>
   }
 

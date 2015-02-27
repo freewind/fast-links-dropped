@@ -4,13 +4,15 @@ import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
 import in.freewind.fastlinks.Link
 import in.freewind.fastlinks.chrome_app.AppBackend
+import in.freewind.fastlinks.chrome_app.main.Move
 import in.freewind.fastlinks.common.Dialog
 
 object ProfileLink extends TypedReactSpec with TypedEventListeners {
 
   case class State(editing: Boolean = false, showDescription: Boolean = false)
 
-  case class Props(allowEditing: Boolean, link: Link, updateLink: Link => Unit, deleteLink: () => Unit, backend: AppBackend)
+  case class Props(allowEditing: Boolean, link: Link, updateLink: Link => Unit, deleteLink: () => Unit,
+                   moveUp: () => Unit, moveDown: () => Unit, backend: AppBackend)
 
   override def getInitialState(self: This) = State()
 
@@ -75,6 +77,7 @@ object ProfileLink extends TypedReactSpec with TypedEventListeners {
               if (allowEditing) {
                 <span>
                   <button onClick={self.askForDeleting}>delete link</button>
+                  { Move(Move.Props(props.moveUp, props.moveDown)) }
                 </span>
               } else None
             }

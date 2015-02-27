@@ -16,7 +16,7 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
 
   override def getInitialState(self: This) = State()
 
-  implicit class Closure(self: This) {
+  implicit class Closure(self: This) extends MoveUpSupport {
 
     import self._
 
@@ -54,6 +54,53 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
     val confirmDeletion = button.onClick(e => {
       props.backend.showDialog(DialogContext("Are you sure to delete this project?", props.deleteProject))
     })
+
+    def moveLinkUp(link: Link): Unit = {
+      val groups = combineLinksAndGroups(project)
+      updateProjectWithGroups(moveLinkUp(groups, link))
+    }
+
+    // FIXME give basic links a real group?
+    private def combineLinksAndGroups(project: Project) = {
+      Seq(LinkGroup("__basicLinks__", project.basicLinks)) ++ project.moreLinkGroups
+    }
+
+    private def updateProjectWithGroups(newGroups: Seq[LinkGroup]): Unit = {
+      val hasBasicLinks = newGroups.headOption.exists(_.name == "__basicLinks__")
+      val newProject = project.copy(
+        basicLinks = if (hasBasicLinks) newGroups.headOption.map(_.links).getOrElse(Nil) else Nil,
+        moreLinkGroups = if (hasBasicLinks) newGroups.tail else newGroups)
+      props.updateProject(project, newProject)
+    }
+
+    def moveLinkDown(link: Link): Unit = {
+      val groups = reverseAll(combineLinksAndGroups(project))
+      updateProjectWithGroups(reverseAll(moveLinkUp(groups, link)))
+    }
+
+    private def reverseAll(groups: Seq[LinkGroup]) = {
+      groups.map(g => g.copy(links = g.links.reverse)).reverse
+    }
+
+    private def moveLinkUp(groups: Seq[LinkGroup], link: Link): Seq[LinkGroup] = {
+      val links = groups.flatMap(_.links :+ separateLink).init
+      val movedLinks = moveUp(links, link)
+      groups.zip(splitBy(movedLinks, separateLink)).map { case (g, l) => g.copy(links = l) }
+    }
+
+    private def splitBy(links: Seq[Link], sepLink: Link): Seq[Seq[Link]] = {
+      def go(restLinks: Seq[Link], result: Seq[Seq[Link]]): Seq[Seq[Link]] = {
+        restLinks match {
+          case Nil => result
+          case ll => val (left, right) = ll span (!_.eq(sepLink))
+            go(if (right.isEmpty) right else right.tail, result :+ left)
+        }
+      }
+      go(links, Nil)
+    }
+
+    private val separateLink = Link(name = Some("sep"), url = "___separator-only___")
+
   }
 
   @scalax
@@ -81,11 +128,11 @@ object ProjectProfile extends TypedReactSpec with TypedEventListeners {
       {Editable.Textarea(allowEditing, project.description, self.updateDesc, Some("project-description"))}
       {
         <div className="project-group">
-          {ProfileLinks(ProfileLinks.Props(allowEditing, project.basicLinks, self.updateBasicLinks, props.backend))}
+          {ProfileLinks(ProfileLinks.Props(allowEditing, project.basicLinks, self.updateBasicLinks, self.moveLinkUp, self.moveLinkDown, props.backend))}
         </div>
       }
       {
-        project.moreLinkGroups.map(group => ProfileLinkGroup(ProfileLinkGroup.Props(allowEditing, group, self.updateLinkGroup(group), props.backend)))
+        project.moreLinkGroups.map(group => ProfileLinkGroup(ProfileLinkGroup.Props(allowEditing, group, self.updateLinkGroup(group), self.moveLinkUp, self.moveLinkDown, props.backend)))
       }
       {
         if (allowEditing) {
