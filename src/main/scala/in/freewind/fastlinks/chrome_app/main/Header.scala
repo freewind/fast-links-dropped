@@ -22,6 +22,8 @@ object Header extends TypedReactSpec with TypedEventListeners {
                    selectCategory: Category => Unit,
                    deleteCategory: Category => Unit,
                    newCategory: String => Unit,
+                   moveCategoryUp: Category => Unit,
+                   moveCategoryDown: Category => Unit,
                    appBackend: AppBackend)
 
   override def getInitialState(self: This) = {
@@ -77,6 +79,7 @@ object Header extends TypedReactSpec with TypedEventListeners {
 
   @scalax
   override def render(self: This) = {
+    import self._
     val allowEditing = self.props.allowEditing
     <div className="header">
       {
@@ -89,7 +92,10 @@ object Header extends TypedReactSpec with TypedEventListeners {
                   if (allowEditing) {
                     <span>
                       { Editable.Input(allowEditing, Some(category.name), self.onUpdateCategoryName(category), className = Some(className))}
-                      <span onClick={self.confirmDeletion(category)}>x</span>
+                      <span>
+                        <span onClick={self.confirmDeletion(category)}>x</span>
+                        { Move(Move.Props(() => props.moveCategoryUp(category), () => props.moveCategoryDown(category))) }
+                      </span>
                     </span>
                   } else {
                     <button onClick={self.selectCategory(category)} className={className}>{category.name}</button>

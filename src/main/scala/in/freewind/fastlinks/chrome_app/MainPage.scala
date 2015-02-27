@@ -2,7 +2,7 @@ package in.freewind.fastlinks.chrome_app
 
 import com.xored.scalajs.react.util.TypedEventListeners
 import com.xored.scalajs.react.{TypedReactSpec, scalax}
-import in.freewind.fastlinks.chrome_app.main.{Header, ProjectList, ProjectProfile}
+import in.freewind.fastlinks.chrome_app.main.{MoveUpSupport, Header, ProjectList, ProjectProfile}
 import in.freewind.fastlinks.common.{Dialog, Search}
 import in.freewind.fastlinks.{Category, Meta, Project}
 
@@ -24,7 +24,7 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
     }
   }
 
-  implicit class Closure(self: This) {
+  implicit class Closure(self: This) extends MoveUpSupport {
 
     import self._
 
@@ -101,6 +101,18 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
         })
       }
     }
+
+    def moveCategoryUp(category: Category): Unit = {
+      props.meta.foreach { meta =>
+        backend.updateMeta(meta = meta.copy(categories = moveUp(meta.categories, category)))
+      }
+    }
+
+    def moveCategoryDown(category: Category): Unit = {
+      props.meta.foreach { meta =>
+        backend.updateMeta(meta = meta.copy(categories = moveUp(meta.categories.reverse, category).reverse))
+      }
+    }
   }
 
   @scalax
@@ -109,7 +121,7 @@ object MainPage extends TypedReactSpec with TypedEventListeners {
     val appBackend = self.props.appBackend
     val (currentCategory, currentProject) = (self.state.currentCategory, self.state.currentProject)
     <div id="main-page">
-      { Header(Header.Props(props.meta, self.state.currentCategory, props.allowEditing, self.selectCategory, self.deleteCategory, self.newCategory, appBackend)) }
+      { Header(Header.Props(props.meta, self.state.currentCategory, props.allowEditing, self.selectCategory, self.deleteCategory, self.newCategory, self.moveCategoryUp, self.moveCategoryDown, appBackend)) }
       { Search(Search.Props(state.currentCategory.map(_.projects).getOrElse(Nil))) }
       <div className="sidebar">
         <div className="project-list">
